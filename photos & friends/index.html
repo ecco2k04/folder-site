@@ -21,8 +21,9 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 13px;
-      color: black;
-      background-color: white;
+      color: #1d1d1f;
+      /* the desktop wallpaper, on every page */
+      background: #f6d6dc url("../.system/wallpaper.jpg") center / cover fixed no-repeat;
       -webkit-font-smoothing: antialiased;
     }
     main {
@@ -123,6 +124,13 @@
     }
     .label-full, .file.selected .label-short {
       display: none;
+    }
+    /* like Finder, unselected names never run past two lines */
+    .label-short {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .file.selected .label-full {
       display: inline;
@@ -454,6 +462,15 @@
     }
     .finder-grid .file {
       width: 100px;
+    }
+    /* icons placed where they sit in the folder's real finder window */
+    .finder-natural {
+      display: block;
+      position: relative;
+      box-sizing: content-box;
+    }
+    .finder-natural .file {
+      position: absolute;
     }
     .finder-list {
       width: 100%;
@@ -1280,7 +1297,7 @@
   <span class="thumb">
     <img src=".thumbs/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png" alt="" loading="lazy" draggable="false">
   </span>
-  <span class="label"><span class="label-short">Screenshot 2026…48.18 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.18 AM.png</span></span>
+  <span class="label"><span class="label-short">Screenshot 2….18 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.18 AM.png</span></span>
 </a>
 
       </div>
@@ -1289,7 +1306,7 @@
   <span class="thumb">
     <img src=".thumbs/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png" alt="" loading="lazy" draggable="false">
   </span>
-  <span class="label"><span class="label-short">Screenshot 2026…48.27 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.27 AM.png</span></span>
+  <span class="label"><span class="label-short">Screenshot 2….27 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.27 AM.png</span></span>
 </a>
 
       </div>
@@ -1298,7 +1315,7 @@
   <span class="thumb">
     <img src=".thumbs/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png" alt="" loading="lazy" draggable="false">
   </span>
-  <span class="label"><span class="label-short">Screenshot 2026…48.33 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.33 AM.png</span></span>
+  <span class="label"><span class="label-short">Screenshot 2….33 AM.png</span><span class="label-full">Screenshot 2026-09-30 at 10.48.33 AM.png</span></span>
 </a>
 
       </div>
@@ -1306,7 +1323,7 @@
   </main>
 
   
-  <script type="application/json" id="tree" data-root="photos &amp; friends">[{"name":"Screenshot 2026-09-30 at 10.48.18 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","modified":"2026-09-30T15:48:24.184Z","bytes":6572885,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","w":2434,"h":1552},{"name":"Screenshot 2026-09-30 at 10.48.27 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","modified":"2026-09-30T15:48:34.066Z","bytes":6344256,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","w":2140,"h":1610},{"name":"Screenshot 2026-09-30 at 10.48.33 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","modified":"2026-09-30T15:48:40.060Z","bytes":6777821,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","w":2170,"h":1592}]</script>
+  <script type="application/json" id="tree" data-root="photos &amp; friends">[{"name":"Screenshot 2026-09-30 at 10.48.18 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","modified":"2026-09-30T15:48:24.184Z","bytes":6572885,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","w":2434,"h":1552,"x":112,"y":0},{"name":"Screenshot 2026-09-30 at 10.48.27 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","modified":"2026-09-30T15:48:34.066Z","bytes":6344256,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","w":2140,"h":1610,"x":0,"y":112},{"name":"Screenshot 2026-09-30 at 10.48.33 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","modified":"2026-09-30T15:48:40.060Z","bytes":6777821,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","w":2170,"h":1592,"x":112,"y":112}]</script>
   <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
 
   <div class="widget weather" aria-label="Weather" hidden>
@@ -1337,7 +1354,7 @@
 
   <div class="pet" hidden>
     <div class="pet-bubble" hidden aria-live="polite">
-      <div class="pet-from">FROM CROISSANT</div>
+      <div class="pet-from">CROISSANT</div>
       <div class="pet-text"></div>
     </div>
     <button class="pet-close" type="button" aria-label="Dismiss" hidden>×</button>
@@ -1812,16 +1829,36 @@
 
     const isTrashed = node => contains(TRASH, node) && node !== TRASH;
 
-    function moveNode(node, folder) {
+    // true if every icon in the folder has a hand-arranged spot
+    const isArranged = folder => folder.children.length > 0 && folder.children.every(n => n.x !== undefined);
+
+    const ICON_SPACING = 112; // finder's default icon grid spacing
+
+    // `at` is an optional [x, y] spot inside the folder's window
+    function moveNode(node, folder, at) {
       const from = parentOf.get(node);
       if (from === folder || contains(node, folder)) {
         return false;
       }
+      const arranged = isArranged(folder);
       from.children.splice(from.children.indexOf(node), 1);
+      // a spot in the new folder: where it was dropped, or the next free
+      // place along the bottom row (positions don't carry between folders)
+      delete node.x;
+      delete node.y;
+      if (arranged) {
+        [node.x, node.y] = at || nextSpot(folder);
+      }
       folder.children.push(node);
       folder.children.sort((a, b) => a.name.localeCompare(b.name));
       parentOf.set(node, folder);
       return true;
+    }
+
+    function nextSpot(folder) {
+      const bottom = Math.max(...folder.children.map(n => n.y));
+      const row = folder.children.filter(n => n.y === bottom);
+      return [Math.max(...row.map(n => n.x)) + ICON_SPACING, bottom];
     }
 
     /* ---------- helpers ---------- */
@@ -1909,7 +1946,7 @@
     function iconLabel(name) {
       const label = el('span', 'label');
       const short = el('span', 'label-short');
-      short.textContent = name.length > 30 ? name.slice(0, 15) + '…' + name.slice(-12) : name;
+      short.textContent = name.length > 24 ? name.slice(0, 12) + '…' + name.slice(-10) : name;
       const full = el('span', 'label-full');
       full.textContent = name;
       label.append(short, full);
@@ -2351,13 +2388,23 @@
         empty.textContent = entry.query ? 'No Results' : '';
         content.append(empty);
       } else if (entry.view === 'icons') {
-        const grid = el('div', 'finder-grid');
+        // arranged by hand on the mac: keep that layout. search results use a grid
+        const natural = !entry.query && isArranged(folder);
+        const grid = el('div', natural ? 'finder-grid finder-natural' : 'finder-grid');
         items.forEach(node => {
           const icon = iconFor(node);
+          if (natural) {
+            icon.style.left = node.x + 'px';
+            icon.style.top = node.y + 'px';
+          }
           wireIcon(icon, () => openItem(node));
           makeDraggable(icon, node);
           grid.append(icon);
         });
+        if (natural) {
+          grid.style.width = Math.max(...items.map(n => n.x)) + 120 + 'px';
+          grid.style.height = Math.max(...items.map(n => n.y)) + 110 + 'px';
+        }
         content.append(grid);
       } else {
         const table = el('table', 'finder-list', '<thead><tr><th>Name</th><th>Date Modified</th><th>Size</th><th>Kind</th></tr></thead>');
@@ -2521,7 +2568,12 @@
       const win = hit.closest('.window');
       if (win) {
         const folder = win.entry.kind === 'finder' ? win.entry.current() : null;
-        return into(folder) ? { kind: 'folder', folder, el: win.querySelector('.finder-content') } : null;
+        // hand-arranged icon view: drops land exactly where you let go
+        const grid = win.querySelector('.finder-natural');
+        if (folder && folder === parentOf.get(node)) {
+          return grid ? { kind: 'reposition', folder, grid } : null;
+        }
+        return into(folder) ? { kind: 'folder', folder, el: win.querySelector('.finder-content'), grid } : null;
       }
       return { kind: 'desktop' };
     }
@@ -2552,6 +2604,25 @@
         }
         return;
       }
+      // the drop point inside a hand-arranged finder window
+      let at;
+      if (target.grid) {
+        const rect = target.grid.getBoundingClientRect();
+        at = [Math.max(0, Math.round(x - rect.left)), Math.max(0, Math.round(y - rect.top))];
+      }
+      if (target.kind === 'reposition') {
+        ghost.remove();
+        [node.x, node.y] = at;
+        refreshAll();
+        return;
+      }
+      if (at) {
+        // it lands right there, so no shrinking animation
+        ghost.remove();
+        moveNode(node, target.folder, at);
+        refreshAll();
+        return;
+      }
       // into a folder (or the trash): shrink the icon into where it went
       const to = target.el.getBoundingClientRect();
       const from = ghost.getBoundingClientRect();
@@ -2560,6 +2631,8 @@
         { transform: `translate(${to.left + to.width / 2 - from.width / 2}px, ${to.top + to.height / 2 - from.height / 2}px) scale(.2)`, opacity: 0 },
       ], { duration: 220, easing: 'ease-in' }).onfinish = () => ghost.remove();
       moveNode(node, target.folder);
+      // fallback in case the animation never finishes (background tabs)
+      setTimeout(() => ghost.remove(), 400);
       refreshAll();
     }
 
