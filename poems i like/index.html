@@ -1129,6 +1129,134 @@
       line-height: 1;
     }
 
+    /* ---------- desktop pet ---------- */
+    .pet {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 60000; /* floats above windows, below the dock */
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      will-change: transform;
+      pointer-events: none; /* only the croissant, bubble and prompt catch clicks */
+    }
+    .pet[hidden] {
+      display: none;
+    }
+    .pet-canvas {
+      display: block;
+      width: 220px;
+      height: 220px;
+      pointer-events: auto;
+      touch-action: none;
+    }
+    .pet-bubble, .pet-prompt {
+      box-sizing: border-box;
+      background: rgba(248, 248, 250, .78);
+      border: .5px solid rgba(0, 0, 0, .08);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .06);
+      -webkit-backdrop-filter: blur(22px) saturate(1.8);
+      backdrop-filter: blur(22px) saturate(1.8);
+      pointer-events: auto;
+    }
+    .pet-bubble {
+      position: absolute;
+      bottom: calc(100% - 64px);
+      width: max-content;
+      max-width: min(340px, calc(100vw - 16px));
+      padding: 14px 20px 16px;
+      border-radius: 22px;
+      user-select: text;
+      -webkit-user-select: text;
+      animation: pet-pop .22s cubic-bezier(.2, .9, .3, 1.3);
+    }
+    .pet-bubble[hidden], .pet-close[hidden] {
+      display: none;
+    }
+    .pet.bubble-below .pet-bubble {
+      bottom: auto;
+      top: calc(100% + 8px);
+    }
+    @keyframes pet-pop {
+      from { opacity: 0; transform: scale(.92) translateY(6px); }
+    }
+    .pet-from {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      color: #8a8a8e;
+    }
+    .pet-text {
+      margin-top: 4px;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #1d1d1f;
+    }
+    .pet-text span {
+      animation: pet-word .45s ease-out backwards;
+    }
+    @keyframes pet-word {
+      from { opacity: 0; filter: blur(6px); }
+    }
+    .pet-bubble.thinking .pet-text {
+      animation: pet-think 1s ease-in-out infinite;
+    }
+    @keyframes pet-think {
+      50% { opacity: .35; }
+    }
+    .pet-close {
+      position: absolute;
+      top: 66px;
+      left: 24px;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: .5px solid rgba(0, 0, 0, .08);
+      border-radius: 50%;
+      background: rgba(248, 248, 250, .85);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      font: inherit;
+      font-size: 16px;
+      line-height: 1;
+      color: #3c3c43;
+      cursor: default;
+      pointer-events: auto;
+    }
+    .pet-prompt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 260px;
+      height: 40px;
+      margin-top: -62px;
+      padding: 0 16px;
+      border-radius: 999px;
+      color: #8a8a8e;
+    }
+    .pet-prompt svg {
+      flex: none;
+      width: 15px;
+      height: 15px;
+    }
+    .pet-prompt input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      font: inherit;
+      font-size: 14px;
+      color: #1d1d1f;
+    }
+    .pet-prompt input::placeholder {
+      color: #8a8a8e;
+    }
+
     /* finder icon view: name-sorted grid */
     .plantbed {
       display: grid;
@@ -1187,6 +1315,423 @@
       <span class="dock-tip">Trash</span>
     </button>
   </nav>
+
+  <div class="pet" hidden>
+    <div class="pet-bubble" hidden aria-live="polite">
+      <div class="pet-from">FROM CROISSANT</div>
+      <div class="pet-text"></div>
+    </div>
+    <button class="pet-close" type="button" aria-label="Dismiss" hidden>×</button>
+    <canvas class="pet-canvas" aria-label="A croissant. Drag it around."></canvas>
+    <form class="pet-prompt">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.6 10.6 3.4 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Ask the croissant something" aria-label="Ask the croissant something" maxlength="200" autocomplete="off">
+    </form>
+  </div>
+
+  
+  <script type="importmap">
+    { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    } }
+  </script>
+  <script type="module">
+    const PET_MODEL = "../.system/croissant.glb";
+    /* ================= desktop pet: a croissant ================= */
+    // a 3d croissant you can drag and throw around. it answers questions,
+    // badly. the model is Poly Haven's "Croissant" (CC0), shrunk to a .glb.
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const CANVAS_PX = 220;      // the canvas is bigger than the croissant, to fit its shadow
+    const EDGE_MARGIN = 16;
+    const FRICTION = 3.2;       // how fast a thrown croissant slows down (per second)
+    const BOUNCE = .5;          // how much speed survives hitting a screen edge
+    const FOLLOW = 18;          // how tightly it follows the cursor while dragged
+    const REST_LIFT = .08;      // hover height above its shadow
+    const DRAG_LIFT = .3;       // picked up: higher, so the shadow drifts further away
+
+    // its whole personality. add or edit lines freely
+    const REPLIES = [
+      'no.',
+      'that sounds like your problem.',
+      'I’m a croissant and i don’t know how i got here',
+      'IDK!!!',
+      'not my department.',
+      'i’m a pastry.',
+      'ask the rock.',
+      'hm. no.',
+      'sure. or not.',
+      'did you try not asking?',
+      'i was asleep.',
+      'that’s above my pay grade. i’m not paid.',
+      'buttery, and not interested.',
+      'can’t talk. flaking.',
+      'probably. who knows.',
+      'i have no hands.',
+      'next question.',
+      'you again.',
+      'mm. fascinating. anyway.',
+      'i’m not a search engine. i’m bread.',
+      'wow.',
+      'let me think. no.',
+      'that’s a lot of words.',
+      'i don’t do mornings.',
+      'go ask a bagel.',
+      'cool story.',
+      'i refuse.',
+      'i’m on break.',
+      'sounds fake but ok.',
+      'please stop shaking me.',
+    ];
+    // a few questions get a specific (still unhelpful) answer
+    const KEYWORDS = [
+      [/\b(hi|hey|hello|yo|sup)\b/i, ['hi. anyway.', 'oh. it’s you.', 'hello. why.']],
+      [/\b(who|what) are you\b|\bname\b/i, ['I’m a croissant and i don’t know how i got here', 'a croissant. obviously.']],
+      [/\b(help|how do i|how to)\b/i, ['no.', 'that sounds like your problem.', 'have you tried figuring it out']],
+      [/\b(love|cute|like you)\b/i, ['ok.', 'i know.', 'weird thing to say to bread.']],
+      [/\b(eat|hungry|bite)\b/i, ['absolutely not.', 'don’t even think about it.']],
+      [/\bkatie\b/i, ['she made me. i didn’t ask for this.', 'she’s around. somewhere.']],
+      [/\?{2,}|!{2,}/, ['IDK!!!', 'calm down.']],
+    ];
+
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const root = document.querySelector('.pet');
+    const canvas = root.querySelector('.pet-canvas');
+    const bubble = root.querySelector('.pet-bubble');
+    const bubbleText = root.querySelector('.pet-text');
+    const closeButton = root.querySelector('.pet-close');
+    const form = root.querySelector('.pet-prompt');
+    const input = form.querySelector('input');
+
+    /* ---------- 3d scene ---------- */
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(CANVAS_PX, CANVAS_PX, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.VSMShadowMap; // soft, blurry edges
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1, .1, 20);
+    camera.position.set(0, 1.75, 2.45);
+    camera.lookAt(0, .15, 0);
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0xe8d8c0, 2.2));
+    // light from the upper left, so the shadow falls down and to the right
+    const sun = new THREE.DirectionalLight(0xffffff, 2.6);
+    sun.position.set(-1.2, 3, -1);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(512, 512);
+    sun.shadow.radius = 9;
+    sun.shadow.blurSamples = 16;
+    Object.assign(sun.shadow.camera, { left: -1.5, right: 1.5, top: 1.5, bottom: -1.5, near: .5, far: 8 });
+    scene.add(sun);
+
+    // an invisible floor that only shows the shadow
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), new THREE.ShadowMaterial({ opacity: .26 }));
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // the croissant spins and squashes around its own middle
+    const pivot = new THREE.Group();
+    scene.add(pivot);
+    let halfHeight = .25;
+
+    /* ---------- motion ---------- */
+    // spring(s, target, stiffness, damping, dt): a damped spring, for wobble
+    const spring = (s, target, k, c, dt) => {
+      s.v += ((target - s.x) * k - s.v * c) * dt;
+      s.x += s.v * dt;
+    };
+    const springAt = x => ({ x, v: 0 });
+
+    const state = {
+      x: 0, y: 0, vx: 0, vy: 0,
+      dragging: false, grabX: 0, grabY: 0, pointerX: 0, pointerY: 0,
+      tiltX: springAt(0), tiltZ: springAt(0), yaw: springAt(0),
+      squash: springAt(1), lift: springAt(REST_LIFT), appear: springAt(reducedMotion ? 1 : 0),
+    };
+
+    // the prompt is wider than the canvas; keep all of it on screen
+    const overhang = () => Math.max(0, (form.offsetWidth - root.offsetWidth) / 2) + 4;
+    const bounds = () => ({
+      minX: overhang(),
+      maxX: window.innerWidth - root.offsetWidth - overhang(),
+      minY: 0,
+      maxY: window.innerHeight - root.offsetHeight - 4,
+    });
+
+    let frame = null;
+    let last = 0;
+    function wake() {
+      if (!frame) {
+        last = performance.now();
+        frame = requestAnimationFrame(tick);
+      }
+    }
+
+    function tick(now) {
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+      const b = bounds();
+
+      if (state.dragging) {
+        // follow the cursor with a little lag, so it feels heavy
+        const tx = state.pointerX - state.grabX;
+        const ty = state.pointerY - state.grabY;
+        const follow = 1 - Math.exp(-FOLLOW * dt);
+        const nx = state.x + (tx - state.x) * follow;
+        const ny = state.y + (ty - state.y) * follow;
+        state.vx = (nx - state.x) / dt;
+        state.vy = (ny - state.y) / dt;
+        state.x = nx;
+        state.y = ny;
+      } else {
+        // thrown: keep going, slow down, bounce off the screen edges
+        state.x += state.vx * dt;
+        state.y += state.vy * dt;
+        const slow = Math.exp(-FRICTION * dt);
+        state.vx *= slow;
+        state.vy *= slow;
+        for (const [axis, min, max] of [['x', b.minX, b.maxX], ['y', b.minY, b.maxY]]) {
+          const v = 'v' + axis;
+          if (state[axis] < min || state[axis] > max) {
+            state[axis] = Math.min(Math.max(state[axis], min), max);
+            state.squash.v -= Math.min(Math.abs(state[v]) / 260, 6); // splat
+            state[v] *= -BOUNCE;
+          }
+        }
+      }
+
+      // lean into the motion, then wobble back upright
+      const lean = .0011;
+      spring(state.tiltZ, Math.max(-.7, Math.min(.7, -state.vx * lean)), 140, 7, dt);
+      spring(state.tiltX, Math.max(-.6, Math.min(.6, state.vy * lean)), 140, 7, dt);
+      spring(state.yaw, Math.max(-.5, Math.min(.5, state.vx * .0006)), 60, 6, dt);
+      spring(state.squash, 1, 320, 10, dt);
+      spring(state.lift, state.dragging ? DRAG_LIFT : REST_LIFT, 90, 12, dt);
+      spring(state.appear, 1, 160, 11, dt);
+
+      const s = Math.max(.05, state.appear.x);
+      const squash = Math.max(.6, Math.min(1.4, state.squash.x));
+      pivot.scale.set(s / Math.sqrt(squash), s * squash, s / Math.sqrt(squash));
+      pivot.rotation.set(state.tiltX.x, state.yaw.x, state.tiltZ.x);
+      pivot.position.y = state.lift.x + halfHeight * s * squash;
+      root.style.transform = `translate(${state.x}px, ${state.y}px)`;
+      renderer.render(scene, camera);
+      positionBubble();
+
+      // stop drawing once everything has settled
+      const settled = !state.dragging && Math.hypot(state.vx, state.vy) < 4 &&
+        [state.tiltX, state.tiltZ, state.yaw, state.squash, state.lift, state.appear]
+          .every(sp => Math.abs(sp.v) < .01 && Math.abs(sp.x - (sp === state.squash || sp === state.appear ? 1 : sp === state.lift ? REST_LIFT : 0)) < .005);
+      frame = settled ? null : requestAnimationFrame(tick);
+    }
+
+    /* ---------- dragging ---------- */
+    // only grab the croissant itself, not the empty corners of its canvas
+    const raycaster = new THREE.Raycaster();
+    function hitsCroissant(e) {
+      const rect = canvas.getBoundingClientRect();
+      const ndc = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(ndc, camera);
+      return raycaster.intersectObject(pivot, true).length > 0;
+    }
+
+    canvas.addEventListener('pointermove', e => {
+      if (!state.dragging) {
+        canvas.style.cursor = hitsCroissant(e) ? 'grab' : '';
+      }
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || !hitsCroissant(e)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        canvas.setPointerCapture(e.pointerId); // keep dragging even off the canvas
+      } catch { }
+      Object.assign(state, {
+        dragging: true,
+        grabX: e.clientX - state.x,
+        grabY: e.clientY - state.y,
+        pointerX: e.clientX,
+        pointerY: e.clientY,
+      });
+      moved = true;
+      state.squash.v += 3; // a little squeeze when picked up
+      canvas.style.cursor = 'grabbing';
+      wake();
+    });
+    // recent cursor positions, to measure how hard it was thrown
+    let samples = [];
+    const sample = e => {
+      const t = performance.now();
+      samples.push({ t, x: e.clientX, y: e.clientY });
+      samples = samples.filter(s => t - s.t < 100);
+    };
+    canvas.addEventListener('pointerdown', e => {
+      samples = [];
+      sample(e);
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (state.dragging) {
+        state.pointerX = e.clientX;
+        state.pointerY = e.clientY;
+        sample(e);
+      }
+    });
+    const letGo = e => {
+      if (!state.dragging) {
+        return;
+      }
+      state.dragging = false;
+      canvas.style.cursor = 'grab';
+      // throw at the speed the cursor was moving just before letting go
+      sample(e);
+      const first = samples[0];
+      const lastSample = samples.at(-1);
+      const elapsed = (lastSample.t - first.t) / 1000;
+      if (elapsed > .01) {
+        state.vx = (lastSample.x - first.x) / elapsed;
+        state.vy = (lastSample.y - first.y) / elapsed;
+      }
+      // throws are capped so it can't vanish across the screen in one frame
+      const speed = Math.hypot(state.vx, state.vy);
+      const max = 2600;
+      if (speed > max) {
+        state.vx *= max / speed;
+        state.vy *= max / speed;
+      }
+      wake();
+    };
+    canvas.addEventListener('pointerup', letGo);
+    canvas.addEventListener('pointercancel', letGo);
+
+    // its home spot, until someone moves it
+    let moved = false;
+    function goHome() {
+      state.x = bounds().minX + EDGE_MARGIN - 4;
+      state.y = window.innerHeight - root.offsetHeight - EDGE_MARGIN;
+    }
+
+    window.addEventListener('resize', () => {
+      if (!moved) {
+        goHome();
+      }
+      const b = bounds();
+      state.x = Math.min(Math.max(state.x, b.minX), b.maxX);
+      state.y = Math.min(Math.max(state.y, b.minY), b.maxY);
+      wake();
+    });
+
+    /* ---------- talking ---------- */
+    let lastReply = '';
+    function replyTo(question) {
+      const match = KEYWORDS.find(([pattern]) => pattern.test(question));
+      const options = (match ? match[1] : REPLIES).filter(r => r !== lastReply);
+      lastReply = options[Math.floor(Math.random() * options.length)];
+      return lastReply;
+    }
+
+    // keep the answer bubble on screen: above the croissant, or below it near the top
+    function positionBubble() {
+      if (bubble.hidden) {
+        return;
+      }
+      const rootRect = root.getBoundingClientRect();
+      root.classList.toggle('bubble-below', rootRect.top < bubble.offsetHeight + 12);
+      const width = bubble.offsetWidth;
+      const centered = (root.offsetWidth - width) / 2;
+      const min = 8 - rootRect.left;
+      const max = window.innerWidth - 8 - rootRect.left - width;
+      bubble.style.left = Math.min(Math.max(centered, min), max) + 'px';
+    }
+
+    let replyTimer = null;
+    function say(text) {
+      bubble.hidden = false;
+      closeButton.hidden = false;
+      bubble.classList.remove('thinking');
+      bubbleText.replaceChildren();
+      // words fade in one at a time
+      text.split(' ').forEach((word, i) => {
+        const span = document.createElement('span');
+        span.textContent = word + ' ';
+        span.style.animationDelay = `${i * 70}ms`;
+        bubbleText.append(span);
+      });
+      positionBubble();
+      state.squash.v -= 2.5; // little hop when it talks
+      state.tiltZ.v += (Math.random() - .5) * 3;
+      wake();
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) {
+        return;
+      }
+      input.value = '';
+      clearTimeout(replyTimer);
+      // pretend to think about it, briefly
+      bubble.hidden = false;
+      closeButton.hidden = false;
+      bubble.classList.add('thinking');
+      bubbleText.textContent = '…';
+      positionBubble();
+      replyTimer = setTimeout(() => say(replyTo(question)), 450 + Math.random() * 600);
+    });
+
+    closeButton.addEventListener('click', () => {
+      clearTimeout(replyTimer);
+      bubble.hidden = true;
+      closeButton.hidden = true;
+    });
+
+    // keep keys typed into the prompt away from the desktop's shortcuts
+    input.addEventListener('keydown', e => e.stopPropagation());
+    root.addEventListener('pointerdown', e => e.stopPropagation());
+
+    /* ---------- spawn ---------- */
+    new GLTFLoader().load(PET_MODEL, gltf => {
+      const model = gltf.scene;
+      model.traverse(child => {
+        if (child.isMesh) {
+          child.castShadow = true;
+        }
+      });
+      // scale to about one unit across and center it on the pivot
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const scale = 1.05 / Math.max(size.x, size.y, size.z);
+      model.scale.setScalar(scale);
+      const center = box.getCenter(new THREE.Vector3()).multiplyScalar(scale);
+      model.position.sub(center);
+      halfHeight = (size.y * scale) / 2;
+      pivot.add(model);
+
+      // land in the bottom-left corner with a little jiggle
+      root.hidden = false;
+      goHome();
+      if (!reducedMotion) {
+        state.tiltZ.v = 5;
+        state.squash.v = -4;
+      }
+      wake();
+    }, undefined, err => console.error('pet failed to load', err));
+
+  </script>
 
   <script>
   (() => {
