@@ -119,7 +119,13 @@
       font-size: 12px;
       line-height: 15px;
       text-align: center;
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
+    }
+    .label-full, .file.selected .label-short {
+      display: none;
+    }
+    .file.selected .label-full {
+      display: inline;
     }
     /* single-click selection, like the macOS desktop */
     .file.selected .thumb {
@@ -130,7 +136,7 @@
       background: #0064e1;
       color: white;
     }
-    .file.selected.inactive .label {
+    .file.selected.inactive .label, .window.inactive .file.selected .label {
       background: #d0d0d0;
       color: black;
     }
@@ -276,6 +282,282 @@
       pointer-events: none; /* keep the drag alive over pdf windows */
     }
 
+    /* ---------- finder windows (macOS Tahoe) ---------- */
+    .window-finder {
+      flex-direction: row;
+      border-radius: 18px;
+      background: white;
+    }
+    .finder-sidebar {
+      position: relative;
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      width: 176px;
+      margin: 8px 0 8px 8px;
+      padding: 44px 8px 8px;
+      box-sizing: border-box;
+      border-radius: 11px;
+      background: #f3f3f5;
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .07), 0 2px 8px rgba(0, 0, 0, .06);
+      overflow-y: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .finder-sidebar .lights {
+      left: 12px;
+      top: 13px;
+    }
+    .sb-section {
+      padding: 12px 8px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, .42);
+    }
+    .lights + .sb-section {
+      padding-top: 0;
+    }
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      min-height: 26px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 7px;
+      background: none;
+      font: inherit;
+      font-size: 13px;
+      color: #1d1d1f;
+      text-align: left;
+      cursor: default;
+    }
+    .sb-item span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .sb-item svg {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      color: #0a7cff;
+    }
+    .sb-item.current {
+      background: rgba(0, 0, 0, .085);
+    }
+    .sb-tag {
+      flex: none;
+      width: 10px;
+      height: 10px;
+      margin: 0 3px;
+      border-radius: 50%;
+    }
+    .finder-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .finder-toolbar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 52px;
+      padding: 0 12px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .tb-group, .tb-search {
+      flex: none;
+      display: flex;
+      align-items: center;
+      height: 32px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .12), 0 1px 4px rgba(0, 0, 0, .1);
+    }
+    .tb-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: none;
+      color: #3c3c43;
+      cursor: default;
+    }
+    .tb-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .tb-btn:disabled {
+      color: rgba(60, 60, 67, .3);
+    }
+    .tb-btn.active {
+      background: rgba(0, 0, 0, .08);
+    }
+    .finder-title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1d1d1f;
+    }
+    .window.inactive .finder-title, .window.inactive .tb-btn {
+      color: #b0b0b0;
+    }
+    .tb-search {
+      gap: 6px;
+      width: 150px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      color: #8a8a8e;
+    }
+    .tb-search svg {
+      flex: none;
+      width: 14px;
+      height: 14px;
+    }
+    .tb-search input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      font: inherit;
+      font-size: 13px;
+      color: #1d1d1f;
+    }
+    .finder-content {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      outline: none;
+    }
+    .finder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 100px);
+      gap: 10px 4px;
+      align-content: start;
+      padding: 8px 12px 16px;
+    }
+    .finder-grid .file {
+      width: 100px;
+    }
+    .finder-list {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .finder-list th {
+      position: sticky;
+      top: 0;
+      padding: 4px 10px;
+      background: white;
+      border-bottom: 1px solid rgba(0, 0, 0, .08);
+      font-size: 12px;
+      font-weight: 500;
+      color: #5e5e63;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .finder-list td {
+      height: 24px;
+      padding: 0 10px;
+      white-space: nowrap;
+      color: #1d1d1f;
+    }
+    .finder-list td + td {
+      color: #6e6e73;
+    }
+    .finder-list tr.row:nth-child(even) td {
+      background: #f5f5f7;
+    }
+    .finder-list tr.row td:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+    .finder-list tr.row td:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+    .finder-list tr.row.selected td {
+      background: #0064e1;
+      color: white;
+    }
+    .window.inactive .finder-list tr.row.selected td {
+      background: #dcdcdc;
+      color: #1d1d1f;
+    }
+    .row-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mini-icon {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      object-fit: cover;
+    }
+    .finder-empty {
+      padding: 40px 0;
+      text-align: center;
+      color: #a1a1a6;
+    }
+    .finder-pathbar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 26px;
+      padding: 0 12px;
+      border-top: 1px solid rgba(0, 0, 0, .06);
+      font-size: 11px;
+      color: #6e6e73;
+      white-space: nowrap;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .crumb {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 4px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      font: inherit;
+      color: inherit;
+      cursor: default;
+    }
+    .crumb:hover {
+      background: rgba(0, 0, 0, .06);
+    }
+    .crumb .mini-icon {
+      width: 13px;
+      height: 13px;
+    }
+    .finder-count {
+      margin-left: auto;
+      padding-left: 12px;
+    }
+
     /* ---------- dock ---------- */
     .dock {
       position: fixed;
@@ -381,6 +663,471 @@
       width: 80%;
       height: 80%;
     }
+    .dock-icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    /* a minimized messages window shows the app icon */
+    .dock-mini .dock-icon svg {
+      border-radius: 22.5%;
+    }
+    .dock-trash .dock-icon {
+      border-radius: 0;
+      box-shadow: none;
+      overflow: visible;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .25));
+    }
+    .dock-trash .dock-icon::after {
+      content: none;
+    }
+    .dock-trash.drop-target .dock-icon {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .25)) brightness(.8);
+    }
+
+    /* ---------- drag and drop ---------- */
+    .drag-ghost {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 200000;
+      opacity: .85;
+      pointer-events: none;
+    }
+    .drag-ghost .label {
+      background: #0064e1;
+      color: white;
+    }
+    .drag-source {
+      opacity: .45;
+    }
+    body.dragging, body.dragging * {
+      cursor: default !important;
+    }
+    .file.drop-target .thumb, .row.drop-target td {
+      background: rgba(0, 100, 225, .18);
+      border-color: rgba(0, 100, 225, .35);
+    }
+    .sb-item.drop-target {
+      background: #0064e1;
+      color: white;
+    }
+    .sb-item.drop-target svg {
+      color: white;
+    }
+    .finder-content.drop-target {
+      box-shadow: inset 0 0 0 3px rgba(0, 100, 225, .55);
+      border-radius: 0 0 10px 0;
+    }
+    .plantbed.frozen {
+      display: block;
+      position: relative;
+    }
+    .plantbed.frozen > .item {
+      position: absolute;
+    }
+    .trash-bar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 12px 6px;
+      padding: 6px 6px 6px 12px;
+      border-radius: 10px;
+      background: #f3f3f5;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    .trash-bar[hidden] {
+      display: none;
+    }
+    .trash-empty {
+      height: 24px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .15), 0 1px 2px rgba(0, 0, 0, .1);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1d1d1f;
+      cursor: default;
+    }
+    .trash-empty:disabled {
+      color: #b0b0b0;
+    }
+
+    /* ---------- messages (guestbook) ---------- */
+    .window-messages {
+      flex-direction: row;
+      border-radius: 18px;
+    }
+    .msg-sidebar {
+      position: relative;
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 232px;
+      margin: 8px 0 8px 8px;
+      padding: 44px 8px 8px;
+      box-sizing: border-box;
+      border-radius: 11px;
+      background: #f3f3f5;
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .07), 0 2px 8px rgba(0, 0, 0, .06);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .msg-sidebar .lights {
+      left: 12px;
+      top: 13px;
+    }
+    .msg-search {
+      width: auto;
+      height: 28px;
+    }
+    .msg-convo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px;
+      border-radius: 10px;
+      cursor: default;
+    }
+    .msg-convo.selected {
+      background: #0a84ff;
+      color: white;
+    }
+    .window.inactive .msg-convo.selected {
+      background: #dcdcdc;
+      color: #1d1d1f;
+    }
+    .convo-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .convo-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .convo-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .convo-time, .convo-preview {
+      font-size: 12px;
+      opacity: .75;
+    }
+    .convo-preview {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+    .avatar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(#a5abb6, #858b96);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+    .avatar-space {
+      visibility: hidden;
+    }
+    .msg-row .avatar {
+      position: relative;
+      z-index: 1; /* above the bubble tail's cutout */
+    }
+    .avatar-group {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(#a5abb6, #858b96) center / 100% no-repeat;
+    }
+    .avatar-group::before {
+      /* two little people */
+      content: "";
+      width: 24px;
+      height: 24px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Ccircle cx='9' cy='8' r='3.6'/%3E%3Cpath d='M2.5 19.5c0-3.8 2.9-6.4 6.5-6.4s6.5 2.6 6.5 6.4z'/%3E%3Ccircle cx='16.5' cy='9' r='2.8' opacity='.8'/%3E%3Cpath d='M15.4 13.3c3.5-.4 6.3 2 6.3 5.4h-4.6c0-2.1-.6-3.9-1.7-5.4z' opacity='.8'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+    .msg-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .msg-header {
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 16px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, .06);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .msg-header .avatar-group {
+      width: 36px;
+      height: 36px;
+    }
+    .msg-header-name {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    .msg-header-sub {
+      font-size: 11px;
+      color: #8a8a8e;
+    }
+    .msg-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 8px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .msg-status {
+      margin: auto;
+      font-size: 13px;
+      color: #a1a1a6;
+    }
+    .msg-stamp {
+      margin: 12px 0 6px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #8a8a8e;
+    }
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .msg-row.last {
+      margin-bottom: 6px;
+    }
+    .msg-row.mine {
+      justify-content: flex-end;
+    }
+    .msg-stack {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+    }
+    .msg-row.mine .msg-stack {
+      align-items: flex-end;
+    }
+    .msg-sender {
+      margin: 0 0 2px 12px;
+      font-size: 11px;
+      color: #8a8a8e;
+    }
+    .bubble {
+      position: relative;
+      padding: 7px 12px;
+      border-radius: 18px;
+      background: #e9e9eb;
+      color: #1d1d1f;
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .msg-row.mine .bubble {
+      background: #0a84ff;
+      color: white;
+    }
+    /* the little tail on the last bubble of a run */
+    .msg-row.last .bubble::before, .msg-row.last .bubble::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 16px;
+      height: 18px;
+    }
+    .msg-row.last.theirs .bubble::before {
+      left: -6px;
+      background: #e9e9eb;
+      border-bottom-right-radius: 14px;
+    }
+    .msg-row.last.theirs .bubble::after {
+      left: -16px;
+      width: 16px;
+      background: white;
+      border-bottom-right-radius: 10px;
+    }
+    .msg-row.last.mine .bubble::before {
+      right: -6px;
+      background: #0a84ff;
+      border-bottom-left-radius: 14px;
+    }
+    .msg-row.last.mine .bubble::after {
+      right: -16px;
+      width: 16px;
+      background: white;
+      border-bottom-left-radius: 10px;
+    }
+    .msg-receipt {
+      margin: 2px 4px 0;
+      font-size: 11px;
+      color: #8a8a8e;
+    }
+    .msg-receipt.failed {
+      color: #ff3b30;
+    }
+    .msg-compose {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px 12px;
+    }
+    .msg-name, .msg-field {
+      height: 32px;
+      box-sizing: border-box;
+      border-radius: 999px;
+      background: white;
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .18), 0 1px 3px rgba(0, 0, 0, .08);
+    }
+    .msg-name {
+      flex: none;
+      width: 120px;
+      padding: 0 12px;
+      border: 0;
+      outline: none;
+      font: inherit;
+      font-size: 13px;
+      color: #1d1d1f;
+      transition: box-shadow .2s;
+    }
+    .msg-name.needs-name {
+      box-shadow: 0 0 0 2px #ff3b30;
+      animation: shake .4s;
+    }
+    @keyframes shake {
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .msg-field {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 3px 0 14px;
+    }
+    .msg-input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      font: inherit;
+      font-size: 13px;
+      color: #1d1d1f;
+    }
+    .msg-send {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #0a84ff;
+      color: white;
+      cursor: default;
+    }
+    .msg-send svg {
+      width: 14px;
+      height: 14px;
+    }
+    .msg-send:disabled {
+      background: #d1d1d6;
+    }
+    .msg-hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+
+    /* ---------- weather widget ---------- */
+    .weather {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: 158px;
+      height: 158px;
+      padding: 14px 16px;
+      box-sizing: border-box;
+      border-radius: 24px;
+      background: linear-gradient(#2f7ad6, #6aaef0);
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .1), 0 8px 24px rgba(0, 0, 0, .18);
+      color: white;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .weather[hidden] {
+      display: none;
+    }
+    .weather[data-look="cloudy"] { background: linear-gradient(#5f7590, #93a6bd); }
+    .weather[data-look="rain"]   { background: linear-gradient(#45556b, #74859b); }
+    .weather[data-look="snow"]   { background: linear-gradient(#7d93ad, #b7c6d8); }
+    .weather[data-look="storm"]  { background: linear-gradient(#2d3442, #586274); }
+    .weather[data-look="night"]  { background: linear-gradient(#0e1a36, #2c3f6e); }
+    .weather-city {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .weather-city svg {
+      width: 10px;
+      height: 10px;
+    }
+    .weather-temp {
+      font-size: 44px;
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+    }
+    .weather-cond {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .weather-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
 
     body {
       overflow-x: auto;
@@ -400,57 +1147,47 @@
 
     <div class="plantbed" style="left: max(0px, calc(50% - 106.5px - 48px))">
       <div class="item" style="top: 154px; left: 213px">
-<a class="file" href="blog%20posts/" draggable="false"
-   data-type="directory" data-name="blog posts"
->
+<a class="file" href="blog%20posts/" draggable="false" data-index="0">
   <span class="thumb">
     <span class="icon icon-folder"></span>
   </span>
-  <span class="label">blog posts</span>
+  <span class="label"><span class="label-short">blog posts</span><span class="label-full">blog posts</span></span>
 </a>
 
       </div>
       <div class="item" style="top: 179px; left: 26px">
-<a class="file" href="misc./" draggable="false"
-   data-type="directory" data-name="misc."
->
+<a class="file" href="misc./" draggable="false" data-index="1">
   <span class="thumb">
     <span class="icon icon-folder"></span>
   </span>
-  <span class="label">misc.</span>
+  <span class="label"><span class="label-short">misc.</span><span class="label-full">misc.</span></span>
 </a>
 
       </div>
       <div class="item" style="top: 78px; left: 135px">
-<a class="file" href="photos%20%26%20friends/" draggable="false"
-   data-type="directory" data-name="photos &amp; friends"
->
+<a class="file" href="photos%20%26%20friends/" draggable="false" data-index="2">
   <span class="thumb">
     <span class="icon icon-folder"></span>
   </span>
-  <span class="label">photos &amp; friends</span>
+  <span class="label"><span class="label-short">photos &amp; friends</span><span class="label-full">photos &amp; friends</span></span>
 </a>
 
       </div>
       <div class="item" style="top: 165px; left: 104px">
-<a class="file" href="poems%20i%20like/" draggable="false"
-   data-type="directory" data-name="poems i like"
->
+<a class="file" href="poems%20i%20like/" draggable="false" data-index="3">
   <span class="thumb">
     <span class="icon icon-folder"></span>
   </span>
-  <span class="label">poems i like</span>
+  <span class="label"><span class="label-short">poems i like</span><span class="label-full">poems i like</span></span>
 </a>
 
       </div>
       <div class="item" style="top: 50px; left: 0px">
-<a class="file" href="welcome.rtf" draggable="false"
-   data-type="document" data-name="welcome.rtf"
-data-content="content-4">
+<a class="file" href="welcome.rtf" draggable="false" data-index="4">
   <span class="thumb">
     <span class="icon icon-file"><span class="ext">RTF</span></span>
   </span>
-  <span class="label">welcome.rtf</span>
+  <span class="label"><span class="label-short">welcome.rtf</span><span class="label-full">welcome.rtf</span></span>
 </a>
 
       </div>
@@ -458,236 +1195,354 @@ data-content="content-4">
   </main>
 
   
-  <template id="content-4"><div class="doc"><p>Hey! Welcome to my personal file directory, hosted on and updated from my actual desktop! This is kinda like my digital garden but it’s mostly just an archive of thing that I hold near and dear to my heart. Thanks for dropping by &lt;3</p></div></template>
+  <script type="application/json" id="tree" data-root="Desktop">[{"name":"blog posts","type":"directory","href":"blog%20posts/","modified":"2026-10-01T14:13:44.343Z","children":[]},{"name":"misc.","type":"directory","href":"misc./","modified":"2026-10-01T14:13:44.344Z","children":[]},{"name":"photos & friends","type":"directory","href":"photos%20%26%20friends/","modified":"2026-10-01T14:13:44.348Z","children":[{"name":"Screenshot 2026-09-30 at 10.48.18 AM.png","type":"image","href":"photos%20%26%20friends/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","modified":"2026-09-30T15:48:24.184Z","bytes":6572885,"thumb":"photos%20%26%20friends/.thumbs/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","w":2434,"h":1552},{"name":"Screenshot 2026-09-30 at 10.48.27 AM.png","type":"image","href":"photos%20%26%20friends/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","modified":"2026-09-30T15:48:34.066Z","bytes":6344256,"thumb":"photos%20%26%20friends/.thumbs/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","w":2140,"h":1610},{"name":"Screenshot 2026-09-30 at 10.48.33 AM.png","type":"image","href":"photos%20%26%20friends/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","modified":"2026-09-30T15:48:40.060Z","bytes":6777821,"thumb":"photos%20%26%20friends/.thumbs/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","w":2170,"h":1592}]},{"name":"poems i like","type":"directory","href":"poems%20i%20like/","modified":"2026-10-01T14:13:44.345Z","children":[]},{"name":"welcome.rtf","type":"document","href":"welcome.rtf","modified":"2026-09-30T15:52:00.888Z","bytes":622,"content":"\u003cdiv class=\"doc\">\u003cp>Hey! Welcome to my personal file directory, hosted on and updated from my actual desktop! This is kinda like my digital garden but it’s mostly just an archive of thing that I hold near and dear to my heart. Thanks for dropping by &lt;3\u003c/p>\u003c/div>"}]</script>
+  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
+
+  <div class="widget weather" aria-label="Weather" hidden>
+    <div class="weather-city"><svg viewBox="0 0 12 12"><path d="M10.6 1.4 1.5 5.3l4 1.2 1.2 4z" fill="currentColor"/></svg><span></span></div>
+    <div class="weather-temp">--°</div>
+    <div class="weather-cond"><span class="weather-icon"></span><span class="weather-text"></span></div>
+  </div>
 
   <nav class="dock" aria-label="Dock">
-    
-    <button class="dock-item running" type="button"><span class="dock-icon" style="background: linear-gradient(#6fc3ff, #1a6fe0)">F</span><span class="dock-tip">Finder</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: conic-gradient(#ff9500, #ffcc00, #34c759, #5ac8fa, #5856d6, #ff2d55, #ff9500)"></span><span class="dock-tip">Photos</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: linear-gradient(#fff3a8, #ffcc00); color: #7a5b00">N</span><span class="dock-tip">Notes</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: linear-gradient(#ff7a90, #fa2d48)">M</span><span class="dock-tip">Music</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: linear-gradient(#6ad3ff, #1e7cf2)">@</span><span class="dock-tip">Mail</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: linear-gradient(#7ef07e, #28bd45)">✎</span><span class="dock-tip">Messages</span></button>
-    <button class="dock-item" type="button"><span class="dock-icon" style="background: linear-gradient(#c9cdd3, #7d838d)">⚙</span><span class="dock-tip">Settings</span></button>
+    <button class="dock-item dock-finder running" type="button" aria-label="Finder">
+      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-finder-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#3fa4f5"/></linearGradient><linearGradient id="dock-finder-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f8cf0"/><stop offset="1" stop-color="#1557d6"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-finder-b)"/><path d="M0 0h27c-3.4 7.5-5.4 15.3-5.6 24.6H27c-.6 8.3.4 15.9 2.8 23.4H0z" fill="url(#dock-finder-a)"/><rect x="12.5" y="14" width="3.2" height="8" rx="1.6" fill="#13253d"/><rect x="32.5" y="14" width="3.2" height="8" rx="1.6" fill="#13253d"/><path d="M11 32.5c7.5 6 18.5 6 26 0" fill="none" stroke="#13253d" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+      <span class="dock-tip">Finder</span>
+    </button>
+    <button class="dock-item dock-messages" type="button" aria-label="Messages">
+      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-msg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6df06c"/><stop offset="1" stop-color="#1fbf3b"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-msg)"/><path d="M24 11c-8.8 0-15.5 5.6-15.5 12.6 0 4 2.2 7.5 5.7 9.8-.3 2.2-1.4 4.2-3.1 5.6 3.1.1 6.1-1 8.3-2.9 1.5.4 3 .6 4.6.6 8.8 0 15.5-5.6 15.5-12.6S32.8 11 24 11z" fill="white"/></svg></span>
+      <span class="dock-tip">Messages</span>
+    </button>
+    <button class="dock-item dock-music" type="button" aria-label="Music">
+      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a8f"/><stop offset="1" stop-color="#f6224a"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-music)"/><path d="M19 15.5 33 12.5v17.2a4.6 4.6 0 1 1-2.6-4.1V17.8L21.6 19.7v12.6a4.6 4.6 0 1 1-2.6-4.1z" fill="white"/></svg></span>
+      <span class="dock-tip">Music</span>
+    </button>
     <span class="dock-divider"></span>
-    <button class="dock-item dock-trash" type="button"><span class="dock-icon" style="background: linear-gradient(#f4f6f8, #c3c8cf); color: #6b7280">⌫</span><span class="dock-tip">Trash</span></button>
+    <button class="dock-item dock-trash" type="button" aria-label="Trash">
+      <span class="dock-icon"></span>
+      <span class="dock-tip">Trash</span>
+    </button>
   </nav>
 
   <script>
   (() => {
+    /* ================= core: data, helpers, selection, windows ================= */
     const DOCK_BASE = 48;   // dock icon size at rest
     const DOCK_MAX = 84;    // size of the icon directly under the cursor
     const DOCK_SPREAD = 70; // how far the magnification reaches, in px
     const TITLEBAR = 28;
 
+    const CONFIG = JSON.parse(document.getElementById('site-config').textContent);
+    const ROOT = {
+      name: document.getElementById('tree').dataset.root,
+      type: 'directory',
+      children: JSON.parse(document.getElementById('tree').textContent),
+    };
+    // a pretend folder; dragging things here only lasts until the page reloads
+    const TRASH = { name: 'Trash', type: 'directory', trash: true, children: [] };
+
     const dock = document.querySelector('.dock');
     const trash = dock.querySelector('.dock-trash');
-    const windows = new Map(); // href -> { win, mini, file }
+    const windows = new Set(); // { kind, win, mini, ... }
     let topZ = 10;
     let cascade = 0;
     let selected = null;
     let lastPointer = 'mouse';
 
-    // locally (file://) folder links need index.html spelled out
-    const local = location.protocol === 'file:';
-    const pageHref = href => local && /(^|\/)(\.\.)?\/?$/.test(href) ? href.replace(/\/?$/, '/') + 'index.html' : href;
-    if (local) {
-      document.querySelectorAll('.pathbar a').forEach(a => a.setAttribute('href', pageHref(a.getAttribute('href'))));
-    }
-
     document.addEventListener('pointerdown', e => { lastPointer = e.pointerType; }, true);
 
+    /* ---------- folder tree ---------- */
+    // everything lives in ROOT or TRASH; moves are in-memory only
+    const parentOf = new Map();
+    (function index(folder) {
+      folder.children.forEach(child => {
+        parentOf.set(child, folder);
+        if (child.children) {
+          index(child);
+        }
+      });
+    })(ROOT);
+
+    // true if `node` is `ancestor` or somewhere inside it
+    function contains(ancestor, node) {
+      for (let n = node; n; n = parentOf.get(n)) {
+        if (n === ancestor) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // folders from the top (Desktop or Trash) down to `folder`
+    function pathTo(folder) {
+      const path = [];
+      for (let n = folder; n; n = parentOf.get(n)) {
+        path.unshift(n);
+      }
+      return path;
+    }
+
+    const isTrashed = node => contains(TRASH, node) && node !== TRASH;
+
+    function moveNode(node, folder) {
+      const from = parentOf.get(node);
+      if (from === folder || contains(node, folder)) {
+        return false;
+      }
+      from.children.splice(from.children.indexOf(node), 1);
+      folder.children.push(node);
+      folder.children.sort((a, b) => a.name.localeCompare(b.name));
+      parentOf.set(node, folder);
+      return true;
+    }
+
+    /* ---------- helpers ---------- */
+    const el = (tag, className, html) => {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (html) node.innerHTML = html;
+      return node;
+    };
+    const extOf = name => name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+    const KINDS = {
+      png: 'PNG image', jpg: 'JPEG image', jpeg: 'JPEG image', gif: 'GIF image', webp: 'WebP image', svg: 'SVG image',
+      bmp: 'BMP image', ico: 'ICO image', apng: 'APNG image', mp4: 'MPEG-4 movie', webm: 'WebM movie',
+      mp3: 'MP3 audio', wav: 'Waveform audio', ogg: 'Ogg audio', m4a: 'Apple MPEG-4 audio', md: 'Markdown document',
+      txt: 'Plain Text', rtf: 'Rich Text Document', doc: 'Word document', docx: 'Word document', odt: 'OpenDocument text',
+      pdf: 'PDF document',
+    };
+    const kindOf = node => node.type === 'directory' ? 'Folder' : KINDS[extOf(node.name)] || (extOf(node.name) ? extOf(node.name).toUpperCase() + ' file' : 'Document');
+
+    function formatSize(bytes) {
+      if (bytes == null) return '--';
+      if (bytes < 1000) return bytes + ' bytes';
+      const units = ['KB', 'MB', 'GB'];
+      let value = bytes / 1000;
+      let unit = 0;
+      while (value >= 1000 && unit < units.length - 1) {
+        value /= 1000;
+        unit++;
+      }
+      return (value < 10 ? value.toFixed(1) : Math.round(value)) + ' ' + units[unit];
+    }
+    const formatDate = iso => iso ? new Date(iso).toLocaleString(undefined, {
+      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+    }).replace(/, (\d+:)/, ' at $1') : '--';
+
+    const LIGHTS =
+      '<div class="lights">' +
+      '<button class="light close" type="button" aria-label="Close"></button>' +
+      '<button class="light minimize" type="button" aria-label="Minimize"></button>' +
+      '<button class="light zoom" type="button" aria-label="Zoom"></button>' +
+      '</div>';
+    const SVG = {
+      back: '<svg viewBox="0 0 16 16"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      forward: '<svg viewBox="0 0 16 16"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      icons: '<svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1.2"/><rect x="9" y="2" width="5" height="5" rx="1.2"/><rect x="2" y="9" width="5" height="5" rx="1.2"/><rect x="9" y="9" width="5" height="5" rx="1.2"/></svg>',
+      list: '<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="2.8" cy="4" r="1.1"/><circle cx="2.8" cy="8" r="1.1"/><circle cx="2.8" cy="12" r="1.1"/><rect x="5.5" y="3.3" width="9" height="1.4" rx=".7"/><rect x="5.5" y="7.3" width="9" height="1.4" rx=".7"/><rect x="5.5" y="11.3" width="9" height="1.4" rx=".7"/></svg>',
+      search: '<svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.6 10.6 3.4 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+      desktop: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.5" y="2.5" width="13" height="9" rx="1.5"/><path d="M5.5 14h5M8 11.5V14" stroke-linecap="round"/></svg>',
+      folder: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1.5 4.2c0-.7.5-1.2 1.2-1.2h3.2l1.5 1.6h5.9c.7 0 1.2.5 1.2 1.2v6.5c0 .7-.5 1.2-1.2 1.2H2.7c-.7 0-1.2-.5-1.2-1.2z" stroke-linejoin="round"/></svg>',
+      trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2.5 4h11M6 4V2.5h4V4M3.8 4l.7 9.2c.1.7.6 1.3 1.3 1.3h4.4c.7 0 1.2-.6 1.3-1.3l.7-9.2"/></svg>',
+      send: '<svg viewBox="0 0 16 16"><path d="M8 13V3.5M3.8 7.5 8 3.3l4.2 4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+    const trashCan = full =>
+      '<svg viewBox="0 0 48 48"><defs><linearGradient id="dock-trash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfcfd"/><stop offset="1" stop-color="#c7ced6"/></linearGradient></defs>' +
+      (full ? '<path d="M12.5 11.5c1-4.5 5.5-6 8-3.5 1.6-3.6 7.6-3.4 9 .4 2.8-1.4 6 .6 5.6 3.1z" fill="#fff" stroke="#b8bfc8" stroke-width=".8"/><path d="M18 8.5l3 3M27 7.5l-1.5 4" stroke="#c9cfd6" stroke-width=".8"/>' : '') +
+      '<path d="M9.5 12.5h29l-2.7 29.3a3 3 0 0 1-3 2.7H15.2a3 3 0 0 1-3-2.7z" fill="url(#dock-trash)" stroke="#9ba4ae" stroke-width=".8"/>' +
+      '<ellipse cx="24" cy="12.5" rx="14.5" ry="2.6" fill="#e6eaef" stroke="#9ba4ae" stroke-width=".8"/>' +
+      '<path d="M16.6 17.5l1 23M24 17.5v23M31.4 17.5l-1 23" stroke="#b3bbc4" stroke-width=".9"/></svg>';
+
+    /* ---------- icons ---------- */
+    // the big icon used on the desktop and in finder icon view
+    function bigIcon(node) {
+      const thumb = el('span', 'thumb');
+      if (node.type === 'directory') {
+        thumb.append(el('span', 'icon icon-folder'));
+      } else if (node.type === 'image') {
+        const img = el('img');
+        img.src = node.thumb || node.href;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.draggable = false;
+        thumb.append(img);
+      } else {
+        const icon = el('span', 'icon icon-file');
+        const ext = el('span', 'ext');
+        ext.textContent = extOf(node.name).toUpperCase().slice(0, 4);
+        icon.append(ext);
+        thumb.append(icon);
+      }
+      return thumb;
+    }
+
+    // like Finder, long names are shortened in the middle until selected
+    // (keep in sync with partials/item.ejs)
+    function iconLabel(name) {
+      const label = el('span', 'label');
+      const short = el('span', 'label-short');
+      short.textContent = name.length > 30 ? name.slice(0, 15) + '…' + name.slice(-12) : name;
+      const full = el('span', 'label-full');
+      full.textContent = name;
+      label.append(short, full);
+      return label;
+    }
+
+    // a desktop / icon-view icon element for `node`
+    function iconFor(node) {
+      const icon = el('a', 'file');
+      icon.href = node.href;
+      icon.draggable = false;
+      icon.node = node;
+      icon.append(bigIcon(node), iconLabel(node.name));
+      return icon;
+    }
+
+    // the 16px icon used in list view, the path bar and the sidebar
+    function miniIcon(node) {
+      if (node.type === 'image') {
+        const img = el('img', 'mini-icon');
+        img.src = node.thumb || node.href;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.draggable = false;
+        return img;
+      }
+      return el('span', 'mini-icon icon ' + (node.type === 'directory' ? 'icon-folder' : 'icon-file'));
+    }
+
     /* ---------- selection ---------- */
-    function select(el) {
-      if (selected && selected !== el) {
+    function select(target) {
+      if (selected && selected !== target) {
         selected.classList.remove('selected', 'inactive');
       }
-      selected = el;
-      if (el) {
-        el.classList.add('selected');
-        el.classList.remove('inactive');
+      selected = target;
+      if (target) {
+        target.classList.add('selected');
+        target.classList.remove('inactive');
       }
     }
 
-    document.querySelectorAll('.file').forEach(el => {
-      el.addEventListener('click', e => {
+    // click selects, double-click (or one tap on touch screens) opens
+    function wireIcon(target, onOpen) {
+      target.addEventListener('click', e => {
         e.preventDefault();
-        select(el);
-        deactivateWindows();
-        // phones and tablets have no double-click, so one tap opens
+        select(target);
         if (lastPointer === 'touch') {
-          open(el);
+          onOpen();
         }
       });
-      el.addEventListener('dblclick', e => {
+      target.addEventListener('dblclick', e => {
         e.preventDefault();
-        open(el);
+        onOpen();
       });
-      el.addEventListener('keydown', e => {
+      target.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ' || (e.metaKey && (e.key === 'o' || e.key === 'ArrowDown'))) {
           e.preventDefault();
-          open(el);
+          onOpen();
         }
       });
-    });
-
-    // clicking empty desktop clears the selection
-    document.querySelector('main').addEventListener('pointerdown', e => {
-      if (!e.target.closest('.file, .pathbar')) {
-        select(null);
-        deactivateWindows();
-      }
-    });
-
-    /* ---------- opening files ---------- */
-    function open(el) {
-      const type = el.dataset.type;
-      const href = el.getAttribute('href');
-      if (type === 'directory') {
-        location.href = pageHref(href);
-        return;
-      }
-      if (type === 'other') {
-        window.open(href, '_blank', 'noopener');
-        return;
-      }
-      const existing = windows.get(href);
-      if (existing) {
-        existing.mini ? restore(existing) : focus(existing.win);
-        return;
-      }
-      openWindow(el, type, href);
     }
 
-    function openWindow(el, type, href) {
+    /* ---------- windows ---------- */
+    // creates a positioned, focusable, draggable window
+    function makeWindow(className, w, h, html, entry) {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const maxW = Math.min(vw - 40, 960);
-      const maxH = vh - 120; // keep clear of the dock
-      let body;
-      let w;
-      let h;
-
-      if (type === 'image' || type === 'video') {
-        body = document.createElement(type === 'image' ? 'img' : 'video');
-        body.src = href;
-        if (type === 'image') {
-          body.alt = el.dataset.name;
-          body.draggable = false;
-        } else {
-          body.controls = true;
-          body.autoplay = true;
-          body.playsInline = true;
-        }
-        const iw = +el.dataset.w || 800;
-        const ih = +el.dataset.h || 600;
-        const scale = Math.min(1, (maxW * .8) / iw, (maxH - TITLEBAR) / ih);
-        w = Math.max(220, Math.round(iw * scale));
-        h = Math.round(ih * scale) + TITLEBAR;
-      } else if (type === 'audio') {
-        body = document.createElement('audio');
-        body.src = href;
-        body.controls = true;
-        body.autoplay = true;
-        [w, h] = [380, 110];
-      } else if (type === 'pdf') {
-        body = document.createElement('iframe');
-        body.src = href;
-        body.title = el.dataset.name;
-        [w, h] = [Math.min(680, maxW), Math.min(820, maxH)];
-      } else {
-        body = document.getElementById(el.dataset.content).content.cloneNode(true);
-        [w, h] = [Math.min(560, maxW), Math.min(620, maxH)];
-      }
-
-      const win = document.createElement('div');
-      win.className = `window window-${type}`;
+      const win = el('div', 'window ' + className, html);
       win.setAttribute('role', 'dialog');
-      win.setAttribute('aria-label', el.dataset.name);
-      win.innerHTML =
-        '<div class="titlebar"><div class="lights">' +
-        '<button class="light close" type="button" aria-label="Close"></button>' +
-        '<button class="light minimize" type="button" aria-label="Minimize"></button>' +
-        '<button class="light zoom" type="button" aria-label="Zoom"></button>' +
-        '</div><div class="title"></div></div><div class="content"></div>';
-      win.querySelector('.title').textContent = el.dataset.name;
-      win.querySelector('.content').append(body);
-
+      win.entry = entry;
       // cascade new windows down and to the right, like Finder
-      const step = (cascade++ % 8) * 26;
+      const offset = (cascade++ % 8) * 26;
       Object.assign(win.style, {
         width: w + 'px',
         height: h + 'px',
-        left: Math.max(10, Math.min((vw - w) / 2 - 80 + step, vw - w - 10)) + 'px',
-        top: Math.max(10, Math.min((vh - h) / 2 - 60 + step, vh - h - 90)) + 'px',
+        left: Math.max(10, Math.min((vw - w) / 2 - 80 + offset, vw - w - 10)) + 'px',
+        top: Math.max(10, Math.min((vh - h) / 2 - 60 + offset, vh - h - 90)) + 'px',
       });
-
-      const entry = { win, mini: null, el, href };
-      windows.set(href, entry);
+      Object.assign(entry, { win, mini: null });
+      windows.add(entry);
       document.body.append(win);
       wireWindow(entry);
       focus(win);
+      updateDockDots();
+      return win;
     }
 
-    /* ---------- window behavior ---------- */
+    function bringBack(entry) {
+      entry.mini ? restore(entry) : focus(entry.win);
+    }
+
     function focus(win) {
       win.style.zIndex = ++topZ;
       windows.forEach(({ win: other }) => other.classList.toggle('inactive', other !== win));
       if (selected) {
-        selected.classList.add('inactive');
+        selected.classList.toggle('inactive', !win.contains(selected));
       }
     }
 
     function deactivateWindows() {
       windows.forEach(({ win }) => win.classList.add('inactive'));
+      if (selected) {
+        selected.classList.remove('inactive');
+      }
     }
+
+    const NOT_DRAGGABLE = 'button, input, textarea, label, .sb-item, .msg-convo';
 
     function wireWindow(entry) {
       const { win } = entry;
-      const bar = win.querySelector('.titlebar');
 
-      win.addEventListener('pointerdown', () => focus(win));
-      win.querySelector('.close').addEventListener('click', () => close(entry));
-      win.querySelector('.minimize').addEventListener('click', () => minimize(entry));
-      win.querySelector('.zoom').addEventListener('click', () => zoom(entry));
-      bar.addEventListener('dblclick', e => {
-        if (!e.target.closest('.lights')) {
-          zoom(entry);
-        }
-      });
-
-      bar.addEventListener('pointerdown', e => {
-        if (e.button !== 0 || e.target.closest('.lights')) {
+      win.addEventListener('pointerdown', e => {
+        focus(win);
+        const handle = e.target.closest('.drag-region');
+        if (e.button !== 0 || !handle || e.target.closest(NOT_DRAGGABLE)) {
           return;
         }
         const startX = e.clientX - win.offsetLeft;
         const startY = e.clientY - win.offsetTop;
-        bar.setPointerCapture(e.pointerId);
+        handle.setPointerCapture(e.pointerId);
         document.body.classList.add('dragging');
 
         const move = ev => {
-          // always leave part of the title bar on screen so it can be grabbed back
+          // always leave part of the window on screen so it can be grabbed back
           const x = Math.min(Math.max(ev.clientX - startX, 80 - win.offsetWidth), window.innerWidth - 80);
           const y = Math.min(Math.max(ev.clientY - startY, 0), window.innerHeight - TITLEBAR - 10);
           win.style.left = x + 'px';
           win.style.top = y + 'px';
         };
         const end = () => {
-          bar.removeEventListener('pointermove', move);
-          bar.removeEventListener('pointerup', end);
-          bar.removeEventListener('pointercancel', end);
+          handle.removeEventListener('pointermove', move);
+          handle.removeEventListener('pointerup', end);
+          handle.removeEventListener('pointercancel', end);
           document.body.classList.remove('dragging');
         };
-        bar.addEventListener('pointermove', move);
-        bar.addEventListener('pointerup', end);
-        bar.addEventListener('pointercancel', end);
+        handle.addEventListener('pointermove', move);
+        handle.addEventListener('pointerup', end);
+        handle.addEventListener('pointercancel', end);
+      });
+
+      win.querySelector('.close').addEventListener('click', () => close(entry));
+      win.querySelector('.minimize').addEventListener('click', () => minimize(entry));
+      win.querySelector('.zoom').addEventListener('click', () => zoom(entry));
+      win.addEventListener('dblclick', e => {
+        if (e.target.closest('.drag-region') && !e.target.closest(NOT_DRAGGABLE)) {
+          zoom(entry);
+        }
       });
     }
 
     function close(entry) {
-      windows.delete(entry.href);
+      windows.delete(entry);
+      entry.onClose?.();
+      if (entry.mini) {
+        entry.mini.remove();
+      }
       entry.win.classList.add('closing');
+      // timeout too, since background tabs can skip animationend
       entry.win.addEventListener('animationend', () => entry.win.remove(), { once: true });
+      setTimeout(() => entry.win.remove(), 300);
+      updateDockDots();
     }
 
     function zoom({ win }) {
@@ -710,23 +1565,23 @@ data-content="content-4">
 
     // shrink the window into a dock tile, then hide it
     function minimize(entry) {
-      const { win, el } = entry;
-      const mini = document.createElement('button');
+      const { win } = entry;
+      const mini = el('button', 'dock-item dock-mini');
       mini.type = 'button';
-      mini.className = 'dock-item dock-mini';
-      const icon = document.createElement('span');
-      icon.className = 'dock-icon';
-      if (el.dataset.thumb) {
-        const img = document.createElement('img');
-        img.src = el.dataset.thumb;
+      const icon = el('span', 'dock-icon');
+      const { node, appIcon } = entry.tile();
+      if (appIcon) {
+        icon.innerHTML = appIcon;
+      } else if (node.type === 'image') {
+        const img = el('img');
+        img.src = node.thumb || node.href;
         img.alt = '';
         icon.append(img);
       } else {
-        icon.innerHTML = '<span class="icon icon-file"></span>';
+        icon.append(el('span', 'icon ' + (node.type === 'directory' ? 'icon-folder' : 'icon-file')));
       }
-      const tip = document.createElement('span');
-      tip.className = 'dock-tip';
-      tip.textContent = el.dataset.name;
+      const tip = el('span', 'dock-tip');
+      tip.textContent = node.name;
       mini.append(icon, tip);
       mini.addEventListener('click', () => restore(entry));
       dock.insertBefore(mini, trash);
@@ -765,14 +1620,851 @@ data-content="content-4">
       ], { duration: 300, easing: 'cubic-bezier(.1, .5, .5, 1)' });
     }
 
+    // the little dot under apps that have windows open
+    function updateDockDots() {
+      const has = kind => [...windows].some(w => w.kind === kind);
+      dock.querySelector('.dock-messages').classList.toggle('running', has('messages'));
+    }
+
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        const active = [...windows.values()].find(({ win, mini }) => !mini && !win.classList.contains('inactive'));
+      if (e.key === 'Escape' && !e.target.closest('input, textarea')) {
+        const active = [...windows].find(({ win, mini }) => !mini && !win.classList.contains('inactive'));
         if (active) {
           close(active);
         }
       }
     });
+
+    /* ================= finder + file windows ================= */
+    const TAGS = [['Red', '#ff4d4d'], ['Orange', '#ff9f0a'], ['Yellow', '#ffd60a'], ['Green', '#32d74b'], ['Blue', '#0a84ff'], ['Purple', '#bf5af2'], ['Gray', '#98989d']];
+
+    function open(node) {
+      if (node.type === 'directory') {
+        showFolder(node);
+        return;
+      }
+      if (node.type === 'other') {
+        window.open(node.href, '_blank', 'noopener');
+        return;
+      }
+      const existing = [...windows].find(w => w.kind === 'file' && w.node === node);
+      existing ? bringBack(existing) : openFile(node);
+    }
+
+    // reuse a finder window already showing `folder`, like macOS does
+    function showFolder(folder) {
+      const existing = [...windows].find(w => w.kind === 'finder' && w.current() === folder);
+      existing ? bringBack(existing) : openFinder(folder);
+    }
+
+    function openFile(node) {
+      const maxW = Math.min(window.innerWidth - 40, 960);
+      const maxH = window.innerHeight - 120; // keep clear of the dock
+      const type = node.type;
+      let body;
+      let w;
+      let h;
+
+      if (type === 'image' || type === 'video') {
+        body = el(type === 'image' ? 'img' : 'video');
+        body.src = node.href;
+        if (type === 'image') {
+          body.alt = node.name;
+          body.draggable = false;
+        } else {
+          body.controls = true;
+          body.autoplay = true;
+          body.playsInline = true;
+        }
+        const iw = node.w || 800;
+        const ih = node.h || 600;
+        const scale = Math.min(1, (maxW * .8) / iw, (maxH - TITLEBAR) / ih);
+        w = Math.max(220, Math.round(iw * scale));
+        h = Math.round(ih * scale) + TITLEBAR;
+      } else if (type === 'audio') {
+        body = el('audio');
+        body.src = node.href;
+        body.controls = true;
+        body.autoplay = true;
+        [w, h] = [380, 110];
+      } else if (type === 'pdf') {
+        body = el('iframe');
+        body.src = node.href;
+        body.title = node.name;
+        [w, h] = [Math.min(680, maxW), Math.min(820, maxH)];
+      } else {
+        body = document.createRange().createContextualFragment(node.content || '');
+        [w, h] = [Math.min(560, maxW), Math.min(620, maxH)];
+      }
+
+      const entry = { kind: 'file', node, tile: () => ({ node }) };
+      const win = makeWindow(`window-${type}`, w, h,
+        `<div class="titlebar drag-region">${LIGHTS}<div class="title"></div></div><div class="content"></div>`, entry);
+      win.setAttribute('aria-label', node.name);
+      win.querySelector('.title').textContent = node.name;
+      win.querySelector('.content').append(body);
+    }
+
+    /* ---------- finder windows ---------- */
+    function openFinder(folder) {
+      const entry = {
+        kind: 'finder',
+        history: [folder],
+        at: 0,
+        view: 'icons',
+        query: '',
+        current: () => entry.history[entry.at],
+        tile: () => ({ node: entry.current() }),
+      };
+      const w = Math.min(780, window.innerWidth - 40);
+      const h = Math.min(480, window.innerHeight - 120);
+      const win = makeWindow('window-finder', w, h,
+        `<aside class="finder-sidebar drag-region">${LIGHTS}<div class="sb-items"></div></aside>` +
+        '<div class="finder-main">' +
+        '<div class="finder-toolbar drag-region">' +
+        `<div class="tb-group"><button class="tb-btn back" type="button" aria-label="Back">${SVG.back}</button>` +
+        `<button class="tb-btn forward" type="button" aria-label="Forward">${SVG.forward}</button></div>` +
+        '<div class="finder-title"></div>' +
+        `<div class="tb-group"><button class="tb-btn view-icons" type="button" aria-label="Icon view">${SVG.icons}</button>` +
+        `<button class="tb-btn view-list" type="button" aria-label="List view">${SVG.list}</button></div>` +
+        `<label class="tb-search">${SVG.search}<input type="search" placeholder="Search" aria-label="Search"></label>` +
+        '</div>' +
+        '<div class="trash-bar" hidden><span>Trash</span><button class="trash-empty" type="button">Empty</button></div>' +
+        '<div class="finder-content"></div>' +
+        '<div class="finder-pathbar"></div>' +
+        '</div>', entry);
+
+      win.querySelector('.back').addEventListener('click', () => go(entry, -1));
+      win.querySelector('.forward').addEventListener('click', () => go(entry, 1));
+      win.querySelector('.view-icons').addEventListener('click', () => { entry.view = 'icons'; renderFinder(entry); });
+      win.querySelector('.view-list').addEventListener('click', () => { entry.view = 'list'; renderFinder(entry); });
+      win.querySelector('.trash-empty').addEventListener('click', emptyTrash);
+      const search = win.querySelector('input');
+      search.addEventListener('input', () => { entry.query = search.value.trim().toLowerCase(); renderFinder(entry); });
+      // clicking empty space in the folder clears the selection
+      win.querySelector('.finder-content').addEventListener('pointerdown', e => {
+        if (!e.target.closest('.file, .row')) {
+          select(null);
+        }
+      });
+      renderFinder(entry);
+    }
+
+    function renderSidebar(entry) {
+      const items = entry.win.querySelector('.sb-items');
+      const folder = entry.current();
+      items.replaceChildren();
+      const section = title => {
+        const heading = el('div', 'sb-section');
+        heading.textContent = title;
+        items.append(heading);
+      };
+      const item = (svg, node) => {
+        const button = el('button', 'sb-item', svg + '<span></span>');
+        button.type = 'button';
+        button.querySelector('span').textContent = node.name;
+        button.classList.toggle('current', node === folder);
+        button.node = node; // also a drop target
+        button.addEventListener('click', () => navigate(entry, node));
+        items.append(button);
+      };
+      section('Favorites');
+      item(SVG.desktop, ROOT);
+      ROOT.children.filter(n => n.type === 'directory').forEach(n => item(SVG.folder, n));
+      section('Locations');
+      item(SVG.trash, TRASH);
+      section('Tags');
+      TAGS.forEach(([name, color]) => {
+        items.append(el('div', 'sb-item', `<span class="sb-tag" style="background:${color}"></span><span>${name}</span>`));
+      });
+    }
+
+    function navigate(entry, folder) {
+      if (folder === entry.current()) {
+        return;
+      }
+      entry.history = entry.history.slice(0, entry.at + 1);
+      entry.history.push(folder);
+      entry.at++;
+      entry.query = '';
+      entry.win.querySelector('input').value = '';
+      renderFinder(entry);
+    }
+
+    function go(entry, delta) {
+      const at = entry.at + delta;
+      if (at >= 0 && at < entry.history.length) {
+        entry.at = at;
+        renderFinder(entry);
+      }
+    }
+
+    function renderFinder(entry) {
+      const { win } = entry;
+      const folder = entry.current();
+      const items = folder.children.filter(n => n.name.toLowerCase().includes(entry.query));
+      const openItem = node => node.type === 'directory' ? navigate(entry, node) : open(node);
+      const hadSelection = selected && win.contains(selected) ? selected.node : null;
+
+      win.setAttribute('aria-label', folder.name);
+      win.querySelector('.finder-title').textContent = folder.name;
+      win.querySelector('.back').disabled = entry.at === 0;
+      win.querySelector('.forward').disabled = entry.at === entry.history.length - 1;
+      win.querySelector('.view-icons').classList.toggle('active', entry.view === 'icons');
+      win.querySelector('.view-list').classList.toggle('active', entry.view === 'list');
+      win.querySelector('.trash-bar').hidden = folder !== TRASH;
+      win.querySelector('.trash-empty').disabled = TRASH.children.length === 0;
+      renderSidebar(entry);
+
+      const content = win.querySelector('.finder-content');
+      content.replaceChildren();
+      if (items.length === 0) {
+        const empty = el('div', 'finder-empty');
+        empty.textContent = entry.query ? 'No Results' : '';
+        content.append(empty);
+      } else if (entry.view === 'icons') {
+        const grid = el('div', 'finder-grid');
+        items.forEach(node => {
+          const icon = iconFor(node);
+          wireIcon(icon, () => openItem(node));
+          makeDraggable(icon, node);
+          grid.append(icon);
+        });
+        content.append(grid);
+      } else {
+        const table = el('table', 'finder-list', '<thead><tr><th>Name</th><th>Date Modified</th><th>Size</th><th>Kind</th></tr></thead>');
+        const tbody = el('tbody');
+        items.forEach(node => {
+          const row = el('tr', 'row', '<td><span class="row-name"><span></span></span></td><td></td><td></td><td></td>');
+          row.tabIndex = 0;
+          row.node = node;
+          const cells = row.children;
+          cells[0].firstChild.prepend(miniIcon(node));
+          cells[0].querySelector('.row-name > span:last-child').textContent = node.name;
+          cells[1].textContent = formatDate(node.modified);
+          cells[2].textContent = node.type === 'directory' ? '--' : formatSize(node.bytes);
+          cells[3].textContent = kindOf(node);
+          wireIcon(row, () => openItem(node));
+          makeDraggable(row, node);
+          tbody.append(row);
+        });
+        table.append(tbody);
+        content.append(table);
+      }
+      // keep the selection across re-renders
+      if (hadSelection) {
+        const again = [...content.querySelectorAll('.file, .row')].find(n => n.node === hadSelection);
+        select(again || null);
+      }
+
+      // path bar: double-click any folder in the chain to go there
+      const pathbar = win.querySelector('.finder-pathbar');
+      pathbar.replaceChildren();
+      pathTo(folder).forEach((node, i) => {
+        if (i > 0) {
+          pathbar.append('›');
+        }
+        const crumb = el('button', 'crumb');
+        crumb.type = 'button';
+        crumb.append(miniIcon(node), node.name);
+        crumb.addEventListener('dblclick', () => navigate(entry, node));
+        pathbar.append(crumb);
+      });
+      const count = el('span', 'finder-count');
+      const total = folder.children.length;
+      count.textContent = `${total} item${total === 1 ? '' : 's'}`;
+      pathbar.append(count);
+    }
+
+    function emptyTrash() {
+      TRASH.children.forEach(node => parentOf.delete(node));
+      TRASH.children = [];
+      windows.forEach(entry => {
+        if (entry.kind === 'file' && pathTo(entry.node)[0] !== ROOT) {
+          close(entry);
+        }
+      });
+      refreshAll();
+    }
+
+    // redraw everything that shows the folder tree after a move
+    function refreshAll() {
+      syncDesktop();
+      windows.forEach(entry => {
+        if (entry.kind === 'finder') {
+          // a folder emptied out of the trash is gone for good
+          entry.history = entry.history.filter(f => [ROOT, TRASH].includes(pathTo(f)[0]));
+          if (!entry.history.length) {
+            entry.history = [TRASH];
+          }
+          entry.at = Math.min(entry.at, entry.history.length - 1);
+          renderFinder(entry);
+        }
+      });
+      trash.querySelector('.dock-icon').innerHTML = trashCan(TRASH.children.length > 0);
+    }
+
+    /* ================= drag and drop ================= */
+    // icons can be dragged around the desktop, into folders and finder windows,
+    // or into the trash. nothing is saved: a reload puts everything back.
+    let dropTarget = null;
+
+    function makeDraggable(source, node) {
+      source.addEventListener('pointerdown', e => {
+        if (e.button !== 0 || lastPointer === 'touch') {
+          return;
+        }
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const rect = source.getBoundingClientRect();
+        // list rows drag a full icon, held by its middle
+        const fromIcon = source.classList.contains('file');
+        const grabX = fromIcon ? startX - rect.left : 48;
+        const grabY = fromIcon ? startY - rect.top : 36;
+        let ghost = null;
+
+        const move = ev => {
+          if (!ghost) {
+            if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 5) {
+              return;
+            }
+            ghost = iconFor(node);
+            ghost.classList.add('drag-ghost');
+            document.body.append(ghost);
+            select(source);
+            source.classList.add('drag-source');
+            document.body.classList.add('dragging');
+          }
+          ghost.style.transform = `translate(${ev.clientX - grabX}px, ${ev.clientY - grabY}px)`;
+          setDropTarget(findDropTarget(ev.clientX, ev.clientY, node));
+        };
+
+        const end = ev => {
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', end);
+          document.removeEventListener('pointercancel', end);
+          if (!ghost) {
+            return;
+          }
+          const target = ev.type === 'pointerup' ? findDropTarget(ev.clientX, ev.clientY, node) : null;
+          setDropTarget(null);
+          source.classList.remove('drag-source');
+          document.body.classList.remove('dragging');
+          swallowNextClick();
+          drop(node, target, ghost, ev.clientX - grabX, ev.clientY - grabY);
+        };
+
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', end);
+        document.addEventListener('pointercancel', end);
+      });
+    }
+
+    // the pointerup that ends a drag shouldn't also count as a click
+    function swallowNextClick() {
+      const swallow = e => {
+        e.stopPropagation();
+        e.preventDefault();
+      };
+      window.addEventListener('click', swallow, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
+    }
+
+    // what's under the pointer that `node` could be dropped into
+    function findDropTarget(x, y, node) {
+      const hit = document.elementFromPoint(x, y);
+      if (!hit) {
+        return null;
+      }
+      const into = folder => folder && folder !== parentOf.get(node) && !contains(node, folder);
+
+      if (hit.closest('.dock-trash')) {
+        return isTrashed(node) && parentOf.get(node) === TRASH ? null : { kind: 'folder', folder: TRASH, el: trash };
+      }
+      if (hit.closest('.dock, .widget')) {
+        return null;
+      }
+      // a folder icon, list row, or sidebar entry
+      const item = hit.closest('.file, .row, .sb-item');
+      if (item && item.node && item.node.type === 'directory' && item.node !== node) {
+        return into(item.node) ? { kind: 'folder', folder: item.node, el: item } : null;
+      }
+      // the open folder of a finder window
+      const win = hit.closest('.window');
+      if (win) {
+        const folder = win.entry.kind === 'finder' ? win.entry.current() : null;
+        return into(folder) ? { kind: 'folder', folder, el: win.querySelector('.finder-content') } : null;
+      }
+      return { kind: 'desktop' };
+    }
+
+    function setDropTarget(target) {
+      if (dropTarget?.el === target?.el) {
+        return;
+      }
+      dropTarget?.el?.classList.remove('drop-target');
+      target?.el?.classList.add('drop-target');
+      dropTarget = target;
+    }
+
+    function drop(node, target, ghost, x, y) {
+      if (!target) {
+        // nowhere to go: fade the icon back out
+        ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150 }).onfinish = () => ghost.remove();
+        return;
+      }
+      if (target.kind === 'desktop') {
+        ghost.remove();
+        if (parentOf.get(node) === ROOT) {
+          placeOnDesktop(node, x, y);
+        } else {
+          moveNode(node, ROOT);
+          pendingDesktopSpot.set(node, [x, y]);
+          refreshAll();
+        }
+        return;
+      }
+      // into a folder (or the trash): shrink the icon into where it went
+      const to = target.el.getBoundingClientRect();
+      const from = ghost.getBoundingClientRect();
+      ghost.animate([
+        { transform: ghost.style.transform, opacity: 1 },
+        { transform: `translate(${to.left + to.width / 2 - from.width / 2}px, ${to.top + to.height / 2 - from.height / 2}px) scale(.2)`, opacity: 0 },
+      ], { duration: 220, easing: 'ease-in' }).onfinish = () => ghost.remove();
+      moveNode(node, target.folder);
+      refreshAll();
+    }
+
+    /* ================= messages: a public guestbook ================= */
+    // with a supabase project configured in site.config.json, everyone sees
+    // everyone's messages. without one, messages stay in this browser only.
+    const GUESTBOOK = CONFIG.guestbook || {};
+    const GUESTBOOK_LIVE = Boolean(GUESTBOOK.supabaseUrl && GUESTBOOK.supabaseKey);
+    const GUESTBOOK_POLL_MS = 15000;
+    const GUESTBOOK_COOLDOWN_MS = 10000;
+    const MINE_KEY = 'guestbook-mine';
+    const NAME_KEY = 'guestbook-name';
+    const LOCAL_KEY = 'guestbook-local';
+    const MESSAGES_ICON = dock.querySelector('.dock-messages .dock-icon').innerHTML;
+
+    const readStore = (key, fallback) => {
+      try {
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+      } catch {
+        return fallback;
+      }
+    };
+    const writeStore = (key, value) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch { }
+    };
+
+    function supabaseHeaders() {
+      const headers = { apikey: GUESTBOOK.supabaseKey };
+      // legacy anon keys are JWTs and also go in Authorization
+      if (GUESTBOOK.supabaseKey.startsWith('eyJ')) {
+        headers.Authorization = 'Bearer ' + GUESTBOOK.supabaseKey;
+      }
+      return headers;
+    }
+
+    async function fetchGuestbook() {
+      if (!GUESTBOOK_LIVE) {
+        return readStore(LOCAL_KEY, []);
+      }
+      const url = `${GUESTBOOK.supabaseUrl}/rest/v1/messages?select=id,name,body,created_at&order=created_at.desc&limit=300`;
+      const res = await fetch(url, { headers: supabaseHeaders() });
+      if (!res.ok) {
+        throw new Error('guestbook fetch failed: ' + res.status);
+      }
+      return (await res.json()).reverse();
+    }
+
+    async function postGuestbook(name, body) {
+      if (!GUESTBOOK_LIVE) {
+        const message = { id: 'local-' + Date.now(), name, body, created_at: new Date().toISOString() };
+        writeStore(LOCAL_KEY, [...readStore(LOCAL_KEY, []), message]);
+        return message;
+      }
+      const res = await fetch(`${GUESTBOOK.supabaseUrl}/rest/v1/messages`, {
+        method: 'POST',
+        headers: { ...supabaseHeaders(), 'Content-Type': 'application/json', Prefer: 'return=representation' },
+        body: JSON.stringify({ name, body }),
+      });
+      if (!res.ok) {
+        throw new Error('guestbook post failed: ' + res.status);
+      }
+      return (await res.json())[0];
+    }
+
+    // "Today 9:41 AM", "Yesterday 9:41 AM", "Mon, Sep 29 at 9:41 AM"
+    function messageStamp(iso) {
+      const date = new Date(iso);
+      const time = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+      const days = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(iso).setHours(0, 0, 0, 0)) / 864e5);
+      if (days === 0) return `Today ${time}`;
+      if (days === 1) return `Yesterday ${time}`;
+      const day = date.toLocaleDateString(undefined, {
+        weekday: 'short', month: 'short', day: 'numeric', year: days > 300 ? 'numeric' : undefined,
+      });
+      return `${day} at ${time}`;
+    }
+
+    const initials = name => name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+
+    function avatar(name, className = 'avatar') {
+      const circle = el('span', className);
+      circle.textContent = initials(name);
+      return circle;
+    }
+
+    function openMessages() {
+      const existing = [...windows].find(w => w.kind === 'messages');
+      if (existing) {
+        bringBack(existing);
+        return;
+      }
+      const entry = {
+        kind: 'messages',
+        messages: [],
+        failed: [],
+        query: '',
+        tile: () => ({ node: { name: 'Messages' }, appIcon: MESSAGES_ICON }),
+      };
+      const w = Math.min(760, window.innerWidth - 40);
+      const h = Math.min(540, window.innerHeight - 110);
+      const win = makeWindow('window-messages', w, h,
+        `<aside class="msg-sidebar drag-region">${LIGHTS}` +
+        `<label class="tb-search msg-search">${SVG.search}<input type="search" placeholder="Search" aria-label="Search messages"></label>` +
+        '<div class="msg-convo selected"><span class="avatar avatar-group"></span>' +
+        '<div class="convo-text"><div class="convo-top"><span class="convo-name">Guestbook</span><span class="convo-time"></span></div>' +
+        '<div class="convo-preview"></div></div></div>' +
+        '</aside>' +
+        '<div class="msg-main">' +
+        '<div class="msg-header drag-region"><span class="avatar avatar-group"></span><div class="msg-header-name">Guestbook</div>' +
+        `<div class="msg-header-sub">${GUESTBOOK_LIVE ? 'Leave a note for everyone who visits' : 'Messages are only saved in this browser for now'}</div></div>` +
+        '<div class="msg-list" aria-live="polite"></div>' +
+        '<form class="msg-compose">' +
+        '<input class="msg-name" type="text" placeholder="Your name" maxlength="40" aria-label="Your name" autocomplete="nickname">' +
+        '<div class="msg-field"><input class="msg-input" type="text" placeholder="Message" maxlength="500" aria-label="Message" autocomplete="off">' +
+        `<button class="msg-send" type="submit" aria-label="Send" disabled>${SVG.send}</button></div>` +
+        // bots fill every field; people never see this one
+        '<input class="msg-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+        '</form>' +
+        '</div>', entry);
+      win.setAttribute('aria-label', 'Messages');
+
+      const form = win.querySelector('.msg-compose');
+      const nameInput = win.querySelector('.msg-name');
+      const input = win.querySelector('.msg-input');
+      const send = win.querySelector('.msg-send');
+      const search = win.querySelector('.msg-search input');
+      let lastSent = 0;
+
+      nameInput.value = readStore(NAME_KEY, '');
+      const updateSend = () => {
+        send.disabled = !input.value.trim();
+      };
+      input.addEventListener('input', updateSend);
+      nameInput.addEventListener('change', () => writeStore(NAME_KEY, nameInput.value.trim()));
+      search.addEventListener('input', () => {
+        entry.query = search.value.trim().toLowerCase();
+        renderMessages(entry);
+      });
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        const body = input.value.trim();
+        if (!body || win.querySelector('.msg-hp').value) {
+          return;
+        }
+        if (!name) {
+          nameInput.classList.add('needs-name');
+          nameInput.focus();
+          setTimeout(() => nameInput.classList.remove('needs-name'), 600);
+          return;
+        }
+        if (Date.now() - lastSent < GUESTBOOK_COOLDOWN_MS) {
+          return;
+        }
+        lastSent = Date.now();
+        writeStore(NAME_KEY, name);
+        input.value = '';
+        updateSend();
+
+        // show it right away, like iMessage, then confirm or mark it failed
+        const pending = { id: 'pending-' + Date.now(), name, body, created_at: new Date().toISOString(), pending: true };
+        entry.messages.push(pending);
+        renderMessages(entry, true);
+        try {
+          const saved = await postGuestbook(name, body);
+          writeStore(MINE_KEY, [...readStore(MINE_KEY, []), saved.id]);
+          entry.messages[entry.messages.indexOf(pending)] = saved;
+        } catch (err) {
+          console.error(err);
+          pending.failed = true;
+        }
+        pending.pending = false;
+        renderMessages(entry);
+      });
+
+      const load = async () => {
+        try {
+          const fresh = await fetchGuestbook();
+          // keep messages that are still sending or failed
+          entry.messages = [...fresh, ...entry.messages.filter(m => m.pending || m.failed)];
+          renderMessages(entry, true);
+        } catch (err) {
+          console.error(err);
+          if (!entry.messages.length) {
+            win.querySelector('.msg-list').replaceChildren(el('div', 'msg-status', 'Couldn’t load messages. Try again later.'));
+          }
+        }
+      };
+      load();
+      const poll = GUESTBOOK_LIVE ? setInterval(() => !entry.mini && load(), GUESTBOOK_POLL_MS) : null;
+      entry.onClose = () => clearInterval(poll);
+      input.focus();
+    }
+
+    function renderMessages(entry, scrollToEnd = false) {
+      const list = entry.win.querySelector('.msg-list');
+      const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 60;
+      const mine = new Set(readStore(MINE_KEY, []));
+      const shown = entry.messages.filter(m => !entry.query || (m.name + ' ' + m.body).toLowerCase().includes(entry.query));
+      const lastMine = [...shown].reverse().find(m => mine.has(m.id) || m.pending || m.failed);
+
+      list.replaceChildren();
+      if (!shown.length) {
+        list.append(el('div', 'msg-status', entry.query ? 'No Results' : 'No messages yet. Say hi!'));
+      }
+      shown.forEach((message, i) => {
+        const prev = shown[i - 1];
+        const next = shown[i + 1];
+        const time = new Date(message.created_at).getTime();
+        // a centered timestamp whenever an hour or more has passed
+        if (!prev || time - new Date(prev.created_at).getTime() > 36e5) {
+          const stamp = el('div', 'msg-stamp');
+          stamp.textContent = messageStamp(message.created_at);
+          list.append(stamp);
+        }
+        const isMine = mine.has(message.id) || message.pending || message.failed;
+        const sameSender = (a, b) => a && b && a.name === b.name && Math.abs(new Date(a.created_at) - new Date(b.created_at)) < 5 * 6e4;
+        const first = !sameSender(prev, message);
+        const last = !sameSender(message, next);
+
+        const row = el('div', 'msg-row ' + (isMine ? 'mine' : 'theirs') + (last ? ' last' : ''));
+        if (!isMine) {
+          row.append(last ? avatar(message.name) : el('span', 'avatar avatar-space'));
+        }
+        const stack = el('div', 'msg-stack');
+        if (!isMine && first) {
+          const sender = el('div', 'msg-sender');
+          sender.textContent = message.name;
+          stack.append(sender);
+        }
+        const bubble = el('div', 'bubble');
+        bubble.textContent = message.body;
+        bubble.title = `${message.name} · ${new Date(message.created_at).toLocaleString()}`;
+        stack.append(bubble);
+        if (message === lastMine) {
+          const status = el('div', 'msg-receipt' + (message.failed ? ' failed' : ''));
+          status.textContent = message.failed ? 'Not Delivered' : message.pending ? 'Sending…' : 'Delivered';
+          stack.append(status);
+        }
+        row.append(stack);
+        list.append(row);
+      });
+
+      const latest = entry.messages.at(-1);
+      entry.win.querySelector('.convo-preview').textContent = latest ? `${latest.name}: ${latest.body}` : 'No messages yet';
+      entry.win.querySelector('.convo-time').textContent = latest ? messageStamp(latest.created_at).replace(/ at .*| \d.*/, '') : '';
+      if (scrollToEnd || nearBottom) {
+        list.scrollTop = list.scrollHeight;
+      }
+    }
+
+    /* ================= weather widget ================= */
+    // live conditions from open-meteo.com (free, no key needed)
+    const WEATHER_REFRESH_MS = 15 * 60 * 1000;
+
+    // WMO weather codes -> [day label, night label, day emoji, night emoji, look]
+    function describeWeather(code) {
+      if (code === 0) return ['Sunny', 'Clear', '☀️', '🌙', 'clear'];
+      if (code === 1) return ['Mostly Sunny', 'Mostly Clear', '🌤️', '🌙', 'clear'];
+      if (code === 2) return ['Partly Cloudy', 'Partly Cloudy', '⛅️', '☁️', 'cloudy'];
+      if (code === 3) return ['Cloudy', 'Cloudy', '☁️', '☁️', 'cloudy'];
+      if (code === 45 || code === 48) return ['Foggy', 'Foggy', '🌫️', '🌫️', 'cloudy'];
+      if (code >= 51 && code <= 57) return ['Drizzle', 'Drizzle', '🌦️', '🌧️', 'rain'];
+      if (code >= 61 && code <= 67) return [code === 65 ? 'Heavy Rain' : 'Rain', code === 65 ? 'Heavy Rain' : 'Rain', '🌧️', '🌧️', 'rain'];
+      if (code >= 71 && code <= 77) return ['Snow', 'Snow', '🌨️', '🌨️', 'snow'];
+      if (code >= 80 && code <= 82) return ['Showers', 'Showers', '🌦️', '🌧️', 'rain'];
+      if (code === 85 || code === 86) return ['Snow Showers', 'Snow Showers', '🌨️', '🌨️', 'snow'];
+      if (code >= 95) return ['Thunderstorms', 'Thunderstorms', '⛈️', '⛈️', 'storm'];
+      return ['--', '--', '', '', 'cloudy'];
+    }
+
+    async function updateWeather() {
+      const widget = document.querySelector('.weather');
+      const place = CONFIG.weather;
+      if (!widget || !place) {
+        return;
+      }
+      widget.querySelector('.weather-city span').textContent = place.city;
+      widget.hidden = false;
+      try {
+        const url = 'https://api.open-meteo.com/v1/forecast?current=temperature_2m,weather_code,is_day&temperature_unit=fahrenheit' +
+          `&latitude=${place.latitude}&longitude=${place.longitude}&timezone=${encodeURIComponent(place.timezone)}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error('weather fetch failed: ' + res.status);
+        }
+        const { current } = await res.json();
+        const day = current.is_day === 1;
+        const [dayLabel, nightLabel, dayIcon, nightIcon, look] = describeWeather(current.weather_code);
+        widget.querySelector('.weather-temp').textContent = Math.round(current.temperature_2m) + '°';
+        widget.querySelector('.weather-icon').textContent = day ? dayIcon : nightIcon;
+        widget.querySelector('.weather-text').textContent = day ? dayLabel : nightLabel;
+        widget.dataset.look = day ? look : 'night';
+      } catch (err) {
+        console.error(err);
+        widget.querySelector('.weather-text').textContent = 'Weather unavailable';
+      }
+    }
+
+    /* ================= desktop + dock ================= */
+    const plantbed = document.querySelector('.plantbed');
+    const desktopItems = new Map(); // node -> .item wrapper on the desktop
+    const pendingDesktopSpot = new Map(); // node -> [x, y] where it was dropped
+    let autoSpot = 0;
+
+    // locally (file://) folder links need index.html spelled out
+    if (location.protocol === 'file:') {
+      document.querySelectorAll('.pathbar a').forEach(a => {
+        a.setAttribute('href', a.getAttribute('href').replace(/\/?$/, '/') + 'index.html');
+      });
+    }
+
+    function wireDesktopIcon(icon, node) {
+      icon.node = node;
+      icon.addEventListener('click', deactivateWindows);
+      wireIcon(icon, () => open(node));
+      makeDraggable(icon, node);
+    }
+
+    plantbed.querySelectorAll('[data-index]').forEach(item => {
+      const node = ROOT.children[+item.dataset.index];
+      desktopItems.set(node, item.closest('.item'));
+      if (item.classList.contains('file')) {
+        wireDesktopIcon(item, node);
+      }
+    });
+
+    // switch the desktop to free positioning, so icons can be dragged anywhere
+    function freezeDesktop() {
+      if (plantbed.classList.contains('frozen')) {
+        return;
+      }
+      const base = plantbed.getBoundingClientRect();
+      const spots = [...plantbed.children].map(item => {
+        const rect = item.getBoundingClientRect();
+        return [item, rect.left - base.left, rect.top - base.top];
+      });
+      plantbed.style.height = plantbed.offsetHeight + 'px';
+      plantbed.classList.add('frozen');
+      spots.forEach(([item, x, y]) => {
+        item.style.left = x + 'px';
+        item.style.top = y + 'px';
+      });
+    }
+
+    // put a desktop icon's top-left corner at viewport point (x, y)
+    function placeOnDesktop(node, x, y) {
+      freezeDesktop();
+      const base = plantbed.getBoundingClientRect();
+      const item = desktopItems.get(node);
+      item.style.left = x - base.left + 'px';
+      item.style.top = y - base.top + 'px';
+    }
+
+    // add or remove desktop icons to match what's in ROOT
+    function syncDesktop() {
+      desktopItems.forEach((item, node) => {
+        if (parentOf.get(node) !== ROOT) {
+          if (selected && item.contains(selected)) {
+            select(null);
+          }
+          item.remove();
+          desktopItems.delete(node);
+        }
+      });
+      ROOT.children.forEach(node => {
+        if (desktopItems.has(node)) {
+          return;
+        }
+        freezeDesktop();
+        const item = el('div', 'item');
+        const icon = iconFor(node);
+        item.append(icon);
+        wireDesktopIcon(icon, node);
+        plantbed.append(item);
+        desktopItems.set(node, item);
+        // dropped on the desktop: land there. otherwise stack down the right edge
+        const [x, y] = pendingDesktopSpot.get(node) || [window.innerWidth - 130, 230 + (autoSpot++ % 5) * 100];
+        pendingDesktopSpot.delete(node);
+        placeOnDesktop(node, x, y);
+      });
+    }
+
+    // clicking empty desktop clears the selection
+    document.querySelector('main').addEventListener('pointerdown', e => {
+      if (!e.target.closest('.file, .pathbar')) {
+        select(null);
+        deactivateWindows();
+      }
+    });
+
+    /* ---------- dock apps ---------- */
+    function bounce(item) {
+      item.querySelector('.dock-icon').animate([
+        { transform: 'translateY(0)' },
+        { transform: 'translateY(-22px)', offset: .25 },
+        { transform: 'translateY(0)', offset: .5 },
+        { transform: 'translateY(-10px)', offset: .7 },
+        { transform: 'translateY(0)' },
+      ], { duration: 750, easing: 'ease-in-out' });
+    }
+
+    // Finder is always running: bring its windows forward, un-minimize one,
+    // or open a new window if there are none
+    dock.querySelector('.dock-finder').addEventListener('click', () => {
+      const finders = [...windows].filter(w => w.kind === 'finder');
+      const visible = finders.filter(w => !w.mini).sort((a, b) => a.win.style.zIndex - b.win.style.zIndex);
+      if (visible.length) {
+        visible.forEach(w => focus(w.win));
+      } else if (finders.length) {
+        restore(finders.at(-1));
+      } else {
+        openFinder(ROOT);
+      }
+    });
+
+    dock.querySelector('.dock-messages').addEventListener('click', e => {
+      if (![...windows].some(w => w.kind === 'messages')) {
+        bounce(e.currentTarget);
+      }
+      openMessages();
+    });
+
+    dock.querySelector('.dock-music').addEventListener('click', e => {
+      bounce(e.currentTarget);
+      window.open(CONFIG.musicUrl, '_blank', 'noopener');
+    });
+
+    trash.addEventListener('click', () => showFolder(TRASH));
+    trash.querySelector('.dock-icon').innerHTML = trashCan(false);
 
     /* ---------- dock magnification ---------- */
     let mouseX = null;
@@ -815,18 +2507,9 @@ data-content="content-4">
       kick();
     });
 
-    // placeholder apps just bounce, like an app launching
-    dock.querySelectorAll('.dock-item:not(.dock-mini)').forEach(item => {
-      item.addEventListener('click', () => {
-        item.querySelector('.dock-icon').animate([
-          { transform: 'translateY(0)' },
-          { transform: 'translateY(-22px)', offset: .25 },
-          { transform: 'translateY(0)', offset: .5 },
-          { transform: 'translateY(-10px)', offset: .7 },
-          { transform: 'translateY(0)' },
-        ], { duration: 750, easing: 'ease-in-out' });
-      });
-    });
+    updateWeather();
+    setInterval(updateWeather, WEATHER_REFRESH_MS);
+
   })();
   </script>
 
