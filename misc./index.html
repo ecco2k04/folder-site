@@ -29,7 +29,7 @@
     main {
       box-sizing: border-box;
       min-height: 100vh;
-      padding: 1.5em 1.5em 120px; /* room for the dock */
+      padding: calc(1.5em + 28px) 1.5em 120px; /* room for the menu bar and dock */
     }
     h1, h2, h3, h4, h5, h6 {
       font-size: 1em;
@@ -134,32 +134,6 @@
     }
     .file.selected .label-full {
       display: inline;
-    }
-    /* a soft pulsing aura on the welcome note until it's been read */
-    .file.beckon .thumb {
-      position: relative;
-      isolation: isolate;
-    }
-    .file.beckon .thumb::before {
-      content: "";
-      position: absolute;
-      inset: -20px;
-      z-index: -1;
-      border-radius: 50%;
-      background: radial-gradient(closest-side, rgba(255, 255, 255, 1), rgba(255, 214, 140, .75) 40%, rgba(255, 150, 200, .4) 65%, rgba(255, 255, 255, 0));
-      filter: blur(4px);
-      animation: beckon 2.8s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes beckon {
-      0%, 100% { opacity: .5; transform: scale(.88); }
-      50% { opacity: 1; transform: scale(1.06); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .file.beckon .thumb::before {
-        animation: none;
-        opacity: .8;
-      }
     }
     /* single-click selection, like the macOS desktop */
     .file.selected .thumb {
@@ -611,10 +585,10 @@
       display: flex;
       align-items: flex-end;
       gap: 4px;
-      height: 56px;
+      height: 48px;
       padding: 0 6px 4px;
       box-sizing: border-box;
-      border-radius: 20px;
+      border-radius: 17px;
       background: rgba(255, 255, 255, .28);
       border: 1px solid rgba(255, 255, 255, .45);
       box-shadow: 0 0 0 .5px rgba(0, 0, 0, .15), 0 10px 30px rgba(0, 0, 0, .15);
@@ -622,7 +596,7 @@
       backdrop-filter: blur(24px) saturate(1.8);
     }
     .dock-item {
-      --size: 48px;
+      --size: 40px;
       position: relative;
       flex: none;
       width: var(--size);
@@ -688,7 +662,7 @@
       flex: none;
       align-self: stretch;
       width: 1px;
-      margin: 8px 4px 4px;
+      margin: 7px 3px 4px;
       background: rgba(0, 0, 0, .18);
     }
     /* minimized windows sit between the divider and the trash */
@@ -1118,7 +1092,7 @@
     /* ---------- weather widget ---------- */
     .weather {
       position: fixed;
-      top: 24px;
+      top: 44px;
       right: 24px;
       z-index: 1;
       display: flex;
@@ -1300,6 +1274,222 @@
       color: #8a8a8e;
     }
 
+    /* ---------- menu bar (macOS Tahoe: see-through, over the wallpaper) ---------- */
+    .menubar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100001;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 28px;
+      padding: 0 8px;
+      box-sizing: border-box;
+      background: linear-gradient(rgba(255, 255, 255, .28), rgba(255, 255, 255, .08));
+      color: #1d1d1f;
+      font-size: 13px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .menu-left, .menu-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 100%;
+    }
+    .menu-title {
+      display: flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 6px;
+      background: none;
+      font: inherit;
+      font-weight: 500;
+      color: inherit;
+      cursor: default;
+    }
+    .menu-title.open {
+      background: rgba(0, 0, 0, .1);
+    }
+    .menu-app {
+      font-weight: 700;
+    }
+    .menu-logo svg {
+      width: 18px;
+      height: 13px;
+    }
+    .menu-status {
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+    }
+    .menu-status svg {
+      height: 13px;
+      width: auto;
+    }
+    .menu-clock {
+      padding: 0 8px 0 6px;
+      font-weight: 500;
+      white-space: pre;
+    }
+    .menu-dropdown {
+      position: fixed;
+      z-index: 100002;
+      min-width: 230px;
+      padding: 5px;
+      border-radius: 12px;
+      background: rgba(246, 246, 248, .84);
+      border: .5px solid rgba(0, 0, 0, .12);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .2), 0 2px 6px rgba(0, 0, 0, .08);
+      -webkit-backdrop-filter: blur(30px) saturate(1.8);
+      backdrop-filter: blur(30px) saturate(1.8);
+      animation: menu-in .12s ease-out;
+    }
+    @keyframes menu-in {
+      from { opacity: 0; }
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      height: 24px;
+      padding: 0 10px 0 24px;
+      border: 0;
+      border-radius: 6px;
+      background: none;
+      font: inherit;
+      font-size: 13px;
+      color: #1d1d1f;
+      text-align: left;
+      cursor: default;
+      position: relative;
+    }
+    .menu-item:not(:disabled):hover {
+      background: #0a84ff;
+      color: white;
+    }
+    .menu-item:disabled {
+      color: #b0b0b5;
+    }
+    .menu-item.checked::before {
+      content: "✓";
+      position: absolute;
+      left: 8px;
+      font-size: 12px;
+    }
+    .menu-label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .menu-shortcut {
+      color: #8a8a8e;
+    }
+    .menu-item:not(:disabled):hover .menu-shortcut {
+      color: rgba(255, 255, 255, .8);
+    }
+    .menu-separator {
+      height: 1px;
+      margin: 5px 10px;
+      background: rgba(0, 0, 0, .1);
+    }
+    .light:disabled {
+      background-color: #d6d6d6 !important;
+      background-image: none !important;
+    }
+
+    /* ---------- about this computer ---------- */
+    .window-about {
+      border-radius: 16px;
+      resize: none;
+    }
+    .window-about .titlebar {
+      background: none;
+      border-bottom: 0;
+    }
+    .about {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px 24px 22px;
+      text-align: center;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .about-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 84px;
+      height: 84px;
+      margin-bottom: 12px;
+      border-radius: 22px;
+      background: linear-gradient(160deg, #b7e3ff, #f7c8e6 60%, #ffd9b8);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .12), inset 0 0 0 .5px rgba(255, 255, 255, .6);
+      color: white;
+    }
+    .about-logo svg {
+      width: 54px;
+      height: 38px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
+    }
+    .about-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1d1d1f;
+    }
+    .about-version {
+      margin-top: 2px;
+      font-size: 12px;
+      color: #8a8a8e;
+    }
+    .about-blurb {
+      margin: 12px 0 14px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #3c3c43;
+    }
+    .about-specs {
+      display: grid;
+      gap: 6px;
+      width: 100%;
+      margin: 0 0 16px;
+      font-size: 11px;
+      text-align: left;
+    }
+    .about-specs div {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 10px;
+    }
+    .about-specs dt {
+      text-align: right;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    .about-specs dd {
+      margin: 0;
+      color: #6e6e73;
+    }
+    .about-more {
+      height: 26px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, .06);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1d1d1f;
+      cursor: default;
+    }
+
     /* finder icon view: name-sorted grid */
     .plantbed {
       display: grid;
@@ -1331,7 +1521,26 @@
 
   
   <script type="application/json" id="tree" data-root="misc.">[]</script>
-  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","welcomeFile":"welcome.rtf","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
+  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","about":{"name":"Katie OS","version":"Version 1.0","blurb":"My first memories all had to do with creating art in the most eccentric and resourceful ways — I make things that touch people and make their lives easier.","specs":[["Processor","Design Engineer — HCI, Communication Design & Music @ WashU"],["Memory","Full of Wikipedia rabbit holes"],["Graphics","Graphic design background, product sense"],["Startup Disk","Guitar · Music Production · Video Editing · Hiking"]]},"clockTimeZone":"America/Chicago","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
+
+  <header class="menubar">
+    <nav class="menu-left" aria-label="Menu bar">
+      <button class="menu-title menu-logo" type="button" data-menu="system" aria-label="Katie OS">
+        <svg viewBox="0 0 20 14"><path d="M15.6 13.5H4.9A4.4 4.4 0 0 1 4.3 4.7 5.6 5.6 0 0 1 15 4a4.8 4.8 0 0 1 .6 9.5z" fill="currentColor"/></svg>
+      </button>
+      <button class="menu-title menu-app" type="button" data-menu="app">Finder</button>
+      <button class="menu-title" type="button" data-menu="file">File</button>
+      <button class="menu-title" type="button" data-menu="view">View</button>
+      <button class="menu-title" type="button" data-menu="go">Go</button>
+      <button class="menu-title" type="button" data-menu="window">Window</button>
+      <button class="menu-title" type="button" data-menu="help">Help</button>
+    </nav>
+    <div class="menu-right">
+      <span class="menu-status" aria-hidden="true"><svg viewBox="0 0 20 14"><path d="M10 12.6 7.6 10a3.4 3.4 0 0 1 4.8 0zM4.9 7.3a7.3 7.3 0 0 1 10.2 0l-1.4 1.4a5.3 5.3 0 0 0-7.4 0zM2.1 4.5a11.3 11.3 0 0 1 15.8 0l-1.4 1.4a9.3 9.3 0 0 0-13 0z" fill="currentColor"/></svg></span>
+      <span class="menu-status" aria-hidden="true"><svg viewBox="0 0 26 14"><rect x=".75" y="1.75" width="21" height="10.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><rect x="2.4" y="3.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><path d="M23.6 5.3v3.4c.8-.3 1.3-1 1.3-1.7s-.5-1.4-1.3-1.7z" fill="currentColor" opacity=".55"/></svg></span>
+      <span class="menu-clock" aria-label="Time"></span>
+    </div>
+  </header>
 
   <div class="widget weather" aria-label="Weather" hidden>
     <div class="weather-city"><svg viewBox="0 0 12 12"><path d="M10.6 1.4 1.5 5.3l4 1.2 1.2 4z" fill="currentColor"/></svg><span></span></div>
@@ -1504,7 +1713,7 @@
     const bounds = () => ({
       minX: overhang(),
       maxX: window.innerWidth - root.offsetWidth - overhang(),
-      minY: 0,
+      minY: 28, // below the menu bar
       maxY: window.innerHeight - root.offsetHeight - 4,
     });
 
@@ -1517,8 +1726,29 @@
       }
     }
 
-    function tick(now) {
-      const dt = Math.min((now - last) / 1000, 1 / 30);
+    // if a bad number ever sneaks into the physics, the croissant's scale or
+    // position becomes NaN and it vanishes. put everything back to rest instead
+    function sanitize() {
+      const springs = [state.tiltX, state.tiltZ, state.yaw, state.squash, state.lift, state.appear];
+      const ok = [state.x, state.y, state.vx, state.vy, ...springs.flatMap(s => [s.x, s.v])].every(Number.isFinite);
+      if (ok) {
+        return;
+      }
+      const b = bounds();
+      state.x = Number.isFinite(state.x) ? Math.min(Math.max(state.x, b.minX), b.maxX) : b.minX;
+      state.y = Number.isFinite(state.y) ? Math.min(Math.max(state.y, b.minY), b.maxY) : b.maxY;
+      state.vx = state.vy = 0;
+      [state.tiltX, state.tiltZ, state.yaw].forEach(s => Object.assign(s, { x: 0, v: 0 }));
+      Object.assign(state.squash, { x: 1, v: 0 });
+      Object.assign(state.lift, { x: REST_LIFT, v: 0 });
+      Object.assign(state.appear, { x: 1, v: 0 });
+    }
+
+    function tick() {
+      // the frame timestamp can land at or before `last`; a zero or negative
+      // step would divide by zero below, so keep it in a sane range
+      const now = performance.now();
+      const dt = Math.min(Math.max((now - last) / 1000, 1 / 240), 1 / 30);
       last = now;
       const b = bounds();
 
@@ -1558,6 +1788,7 @@
       spring(state.squash, 1, 320, 10, dt);
       spring(state.lift, state.dragging ? DRAG_LIFT : REST_LIFT, 90, 12, dt);
       spring(state.appear, 1, 160, 11, dt);
+      sanitize();
 
       const s = Math.max(.05, state.appear.x);
       const squash = Math.max(.6, Math.min(1.4, state.squash.x));
@@ -1760,6 +1991,12 @@
       replyTimer = setTimeout(() => say(replyTo(question)), 450 + Math.random() * 600);
     });
 
+    // other parts of the desktop (like Help in the menu bar) can make it talk
+    window.addEventListener('pet-say', e => {
+      clearTimeout(replyTimer);
+      say(e.detail);
+    });
+
     closeButton.addEventListener('click', () => {
       clearTimeout(replyTimer);
       bubble.hidden = true;
@@ -1803,10 +2040,11 @@
   <script>
   (() => {
     /* ================= core: data, helpers, selection, windows ================= */
-    const DOCK_BASE = 48;   // dock icon size at rest
-    const DOCK_MAX = 84;    // size of the icon directly under the cursor
-    const DOCK_SPREAD = 70; // how far the magnification reaches, in px
+    const DOCK_BASE = 40;   // dock icon size at rest
+    const DOCK_MAX = 70;    // size of the icon directly under the cursor
+    const DOCK_SPREAD = 60; // how far the magnification reaches, in px
     const TITLEBAR = 28;
+    const MENUBAR_HEIGHT = 28; // windows stay below the menu bar
 
     const CONFIG = JSON.parse(document.getElementById('site-config').textContent);
     const ROOT = {
@@ -2054,7 +2292,7 @@
         width: w + 'px',
         height: h + 'px',
         left: Math.max(10, Math.min((vw - w) / 2 - 80 + offset, vw - w - 10)) + 'px',
-        top: Math.max(10, Math.min((vh - h) / 2 - 60 + offset, vh - h - 90)) + 'px',
+        top: Math.max(MENUBAR_HEIGHT + 8, Math.min((vh - h) / 2 - 60 + offset, vh - h - 90)) + 'px',
       });
       Object.assign(entry, { win, mini: null });
       windows.add(entry);
@@ -2075,6 +2313,7 @@
       if (selected) {
         selected.classList.toggle('inactive', !win.contains(selected));
       }
+      updateMenubar();
     }
 
     function deactivateWindows() {
@@ -2082,6 +2321,7 @@
       if (selected) {
         selected.classList.remove('inactive');
       }
+      updateMenubar();
     }
 
     const NOT_DRAGGABLE = 'button, input, textarea, label, .sb-item, .msg-convo';
@@ -2103,7 +2343,7 @@
         const move = ev => {
           // always leave part of the window on screen so it can be grabbed back
           const x = Math.min(Math.max(ev.clientX - startX, 80 - win.offsetWidth), window.innerWidth - 80);
-          const y = Math.min(Math.max(ev.clientY - startY, 0), window.innerHeight - TITLEBAR - 10);
+          const y = Math.min(Math.max(ev.clientY - startY, MENUBAR_HEIGHT), window.innerHeight - TITLEBAR - 10);
           win.style.left = x + 'px';
           win.style.top = y + 'px';
         };
@@ -2139,6 +2379,7 @@
       entry.win.addEventListener('animationend', () => entry.win.remove(), { once: true });
       setTimeout(() => entry.win.remove(), 300);
       updateDockDots();
+      updateMenubar();
     }
 
     function zoom({ win }) {
@@ -2151,9 +2392,9 @@
         win.dataset.restore = JSON.stringify({ left, top, width, height });
         Object.assign(win.style, {
           left: '8px',
-          top: '8px',
+          top: MENUBAR_HEIGHT + 6 + 'px',
           width: window.innerWidth - 16 + 'px',
-          height: window.innerHeight - 90 + 'px',
+          height: window.innerHeight - MENUBAR_HEIGHT - 88 + 'px',
         });
       }
       setTimeout(() => win.classList.remove('zooming'), 260);
@@ -2196,6 +2437,7 @@
         win.style.display = 'none';
       };
       win.classList.add('inactive');
+      updateMenubar();
     }
 
     function restore(entry) {
@@ -2235,7 +2477,6 @@
     const TAGS = [['Red', '#ff4d4d'], ['Orange', '#ff9f0a'], ['Yellow', '#ffd60a'], ['Green', '#32d74b'], ['Blue', '#0a84ff'], ['Purple', '#bf5af2'], ['Gray', '#98989d']];
 
     function open(node) {
-      markWelcomeRead(node);
       if (node.type === 'directory') {
         showFolder(node);
         return;
@@ -2967,6 +3208,224 @@
       }
     }
 
+    /* ================= menu bar ================= */
+    const menubar = document.querySelector('.menubar');
+    const appTitle = menubar.querySelector('.menu-app');
+    const clock = menubar.querySelector('.menu-clock');
+    const ABOUT = CONFIG.about || {};
+    const CLOUD_ICON = menubar.querySelector('.menu-logo').innerHTML;
+    let openMenu = null; // { title, dropdown }
+
+    // the frontmost window that isn't minimized
+    const activeEntry = () => [...windows].find(w => !w.mini && !w.win.classList.contains('inactive'));
+
+    // which "app" the front window belongs to, like the bold name in the real menu bar
+    function appNameFor(entry) {
+      if (!entry || entry.kind === 'finder') return 'Finder';
+      if (entry.kind === 'messages') return 'Messages';
+      if (entry.kind === 'about') return 'Katie OS';
+      const type = entry.node.type;
+      if (type === 'image' || type === 'pdf') return 'Preview';
+      if (type === 'video') return 'QuickTime Player';
+      if (type === 'audio') return 'Music';
+      return 'TextEdit';
+    }
+
+    function updateMenubar() {
+      appTitle.textContent = appNameFor(activeEntry());
+    }
+
+    /* ---------- menus ---------- */
+    // each menu is a list of items: { label, action, shortcut, disabled, checked } or '-'
+    const MENUS = {
+      system: () => [
+        { label: `About ${ABOUT.name || 'Katie OS'}`, action: openAbout },
+        '-',
+        { label: 'Sign the Guestbook…', action: openMessages },
+        { label: 'Ask the Croissant…', action: () => document.querySelector('.pet-prompt input')?.focus() },
+        '-',
+        { label: 'Restart…', action: () => location.reload() },
+      ],
+      app: () => {
+        const entry = activeEntry();
+        return [
+          { label: `About ${appNameFor(entry)}`, action: openAbout },
+          '-',
+          { label: 'Empty Trash…', action: emptyTrash, disabled: TRASH.children.length === 0 },
+          '-',
+          { label: `Quit ${appNameFor(entry)}`, shortcut: '⌘Q', action: () => entry && close(entry), disabled: !entry },
+        ];
+      },
+      file: () => {
+        const entry = activeEntry();
+        return [
+          { label: 'New Finder Window', shortcut: '⌘N', action: () => openFinder(ROOT) },
+          { label: 'Open Messages', action: openMessages },
+          '-',
+          { label: 'Close Window', shortcut: '⌘W', action: () => close(entry), disabled: !entry },
+          '-',
+          { label: 'Empty Trash…', shortcut: '⇧⌘⌫', action: emptyTrash, disabled: TRASH.children.length === 0 },
+        ];
+      },
+      view: () => {
+        const entry = activeEntry();
+        const finder = entry && entry.kind === 'finder' ? entry : null;
+        const setView = view => () => {
+          finder.view = view;
+          renderFinder(finder);
+        };
+        return [
+          { label: 'as Icons', shortcut: '⌘1', action: setView('icons'), disabled: !finder, checked: finder?.view === 'icons' },
+          { label: 'as List', shortcut: '⌘2', action: setView('list'), disabled: !finder, checked: finder?.view === 'list' },
+        ];
+      },
+      go: () => {
+        const entry = activeEntry();
+        const finder = entry && entry.kind === 'finder' ? entry : null;
+        // like Finder: go there in the front window, or open one
+        const goTo = folder => () => finder ? navigate(finder, folder) : showFolder(folder);
+        return [
+          { label: 'Back', shortcut: '⌘[', action: () => go(finder, -1), disabled: !finder || finder.at === 0 },
+          { label: 'Forward', shortcut: '⌘]', action: () => go(finder, 1), disabled: !finder || finder.at === finder.history.length - 1 },
+          '-',
+          { label: ROOT.name, action: goTo(ROOT) },
+          ...ROOT.children.filter(n => n.type === 'directory').map(n => ({ label: n.name, action: goTo(n) })),
+          '-',
+          { label: 'Trash', action: goTo(TRASH) },
+        ];
+      },
+      window: () => {
+        const entry = activeEntry();
+        const all = [...windows];
+        return [
+          { label: 'Minimize', shortcut: '⌘M', action: () => minimize(entry), disabled: !entry || entry.kind === 'about' },
+          { label: 'Zoom', action: () => zoom(entry), disabled: !entry || entry.kind === 'about' },
+          ...(all.length ? ['-'] : []),
+          ...all.map(w => ({
+            label: w.win.getAttribute('aria-label'),
+            checked: w === entry,
+            action: () => bringBack(w),
+          })),
+        ];
+      },
+      help: () => [
+        // the croissant handles support, reluctantly
+        { label: `${ABOUT.name || 'Katie OS'} Help`, action: () => window.dispatchEvent(new CustomEvent('pet-say', { detail: 'help yourself. or throw me, i guess.' })) },
+        { label: 'Leave Feedback…', action: openMessages },
+      ],
+    };
+
+    function showMenu(title) {
+      hideMenu();
+      const dropdown = el('div', 'menu-dropdown');
+      dropdown.setAttribute('role', 'menu');
+      MENUS[title.dataset.menu]().forEach(item => {
+        if (item === '-') {
+          dropdown.append(el('div', 'menu-separator'));
+          return;
+        }
+        const row = el('button', 'menu-item' + (item.checked ? ' checked' : ''));
+        row.type = 'button';
+        row.setAttribute('role', 'menuitem');
+        row.disabled = Boolean(item.disabled);
+        const label = el('span', 'menu-label');
+        label.textContent = item.label;
+        row.append(label);
+        if (item.shortcut) {
+          const shortcut = el('span', 'menu-shortcut');
+          shortcut.textContent = item.shortcut;
+          row.append(shortcut);
+        }
+        row.addEventListener('click', () => {
+          hideMenu();
+          item.action();
+        });
+        dropdown.append(row);
+      });
+      const rect = title.getBoundingClientRect();
+      dropdown.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+      dropdown.style.top = MENUBAR_HEIGHT + 'px';
+      document.body.append(dropdown);
+      title.classList.add('open');
+      openMenu = { title, dropdown };
+    }
+
+    function hideMenu() {
+      if (openMenu) {
+        openMenu.title.classList.remove('open');
+        openMenu.dropdown.remove();
+        openMenu = null;
+      }
+    }
+
+    menubar.querySelectorAll('.menu-title').forEach(title => {
+      // click to open; once a menu is open, hovering the others switches to them
+      title.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        openMenu?.title === title ? hideMenu() : showMenu(title);
+      });
+      title.addEventListener('pointerenter', () => {
+        if (openMenu && openMenu.title !== title) {
+          showMenu(title);
+        }
+      });
+    });
+    document.addEventListener('pointerdown', e => {
+      if (openMenu && !e.target.closest('.menu-dropdown, .menubar')) {
+        hideMenu();
+      }
+    }, true);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        hideMenu();
+      }
+    });
+
+    /* ---------- about this computer ---------- */
+    function openAbout() {
+      const existing = [...windows].find(w => w.kind === 'about');
+      if (existing) {
+        bringBack(existing);
+        return;
+      }
+      const entry = { kind: 'about', tile: () => ({ node: { name: ABOUT.name || 'Katie OS' }, appIcon: CLOUD_ICON }) };
+      const win = makeWindow('window-about', 300, 440,
+        `<div class="titlebar drag-region">${LIGHTS}<div class="title"></div></div>` +
+        `<div class="content about"><div class="about-logo">${CLOUD_ICON}</div>` +
+        '<div class="about-name"></div><div class="about-version"></div><p class="about-blurb"></p>' +
+        '<dl class="about-specs"></dl>' +
+        '<button class="about-more" type="button">Sign the Guestbook…</button></div>', entry);
+      win.setAttribute('aria-label', `About ${ABOUT.name || 'Katie OS'}`);
+      win.querySelector('.about-name').textContent = ABOUT.name || 'Katie OS';
+      win.querySelector('.about-version').textContent = ABOUT.version || '';
+      win.querySelector('.about-blurb').textContent = ABOUT.blurb || '';
+      const specs = win.querySelector('.about-specs');
+      (ABOUT.specs || []).forEach(([label, value]) => {
+        const row = el('div');
+        const dt = el('dt');
+        dt.textContent = label;
+        const dd = el('dd');
+        dd.textContent = value;
+        row.append(dt, dd);
+        specs.append(row);
+      });
+      win.querySelector('.about-more').addEventListener('click', openMessages);
+      // like the real one, it can't be minimized or zoomed
+      win.querySelectorAll('.minimize, .zoom').forEach(b => { b.disabled = true; });
+    }
+
+    /* ---------- clock ---------- */
+    // "Wed Oct 1  12:45 PM", in Katie's time zone (Central)
+    function tickClock() {
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
+        timeZone: CONFIG.clockTimeZone || 'America/Chicago',
+        weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true,
+      }).formatToParts(new Date()).map(p => [p.type, p.value]));
+      clock.textContent = `${parts.weekday} ${parts.month} ${parts.day}  ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
+      clock.title = 'Central Time (St. Louis)';
+    }
+
     /* ================= desktop + dock ================= */
     const plantbed = document.querySelector('.plantbed');
     const desktopItems = new Map(); // node -> .item wrapper on the desktop
@@ -2994,20 +3453,6 @@
         wireDesktopIcon(item, node);
       }
     });
-
-    // the welcome note glows until it's been opened once (remembered per visitor)
-    const WELCOME_READ_KEY = 'welcome-read';
-    const welcomeNode = ROOT.children.find(n => n.name === CONFIG.welcomeFile);
-    if (welcomeNode && !readStore(WELCOME_READ_KEY, false)) {
-      desktopItems.get(welcomeNode)?.querySelector('.file')?.classList.add('beckon');
-    }
-    function markWelcomeRead(node) {
-      if (node === welcomeNode) {
-        writeStore(WELCOME_READ_KEY, true);
-        document.querySelectorAll('.beckon').forEach(icon => icon.classList.remove('beckon'));
-      }
-    }
-
     // switch the desktop to free positioning, so icons can be dragged anywhere
     function freezeDesktop() {
       if (plantbed.classList.contains('frozen')) {
@@ -3155,6 +3600,9 @@
 
     updateWeather();
     setInterval(updateWeather, WEATHER_REFRESH_MS);
+    tickClock();
+    setInterval(tickClock, 10000);
+    updateMenubar();
 
   })();
   </script>
