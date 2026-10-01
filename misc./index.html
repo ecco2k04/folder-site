@@ -135,6 +135,32 @@
     .file.selected .label-full {
       display: inline;
     }
+    /* a soft pulsing aura on the welcome note until it's been read */
+    .file.beckon .thumb {
+      position: relative;
+      isolation: isolate;
+    }
+    .file.beckon .thumb::before {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      z-index: -1;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(255, 255, 255, 1), rgba(255, 214, 140, .75) 40%, rgba(255, 150, 200, .4) 65%, rgba(255, 255, 255, 0));
+      filter: blur(4px);
+      animation: beckon 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes beckon {
+      0%, 100% { opacity: .5; transform: scale(.88); }
+      50% { opacity: 1; transform: scale(1.06); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .file.beckon .thumb::before {
+        animation: none;
+        opacity: .8;
+      }
+    }
     /* single-click selection, like the macOS desktop */
     .file.selected .thumb {
       background: rgba(0, 0, 0, .12);
@@ -1305,7 +1331,7 @@
 
   
   <script type="application/json" id="tree" data-root="misc.">[]</script>
-  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
+  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","welcomeFile":"welcome.rtf","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
 
   <div class="widget weather" aria-label="Weather" hidden>
     <div class="weather-city"><svg viewBox="0 0 12 12"><path d="M10.6 1.4 1.5 5.3l4 1.2 1.2 4z" fill="currentColor"/></svg><span></span></div>
@@ -1640,6 +1666,30 @@
       state.x = bounds().minX + EDGE_MARGIN - 4;
       state.y = window.innerHeight - root.offsetHeight - EDGE_MARGIN;
     }
+
+    // a little wiggle when the cursor comes near, as a hint that it can be picked up
+    const NEAR_PX = 120;
+    const NUDGE_EVERY_MS = 900;
+    let lastNudge = 0;
+    let wasNear = false;
+    document.addEventListener('pointermove', e => {
+      if (state.dragging || root.hidden || reducedMotion || e.pointerType !== 'mouse') {
+        return;
+      }
+      const rect = canvas.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const near = Math.hypot(e.clientX - centerX, e.clientY - (rect.top + rect.height / 2)) < NEAR_PX;
+      const now = performance.now();
+      if (near && (!wasNear || now - lastNudge > NUDGE_EVERY_MS)) {
+        lastNudge = now;
+        // lean away from the cursor; a bigger jiggle the moment it arrives
+        const away = e.clientX < centerX ? -1 : 1;
+        state.tiltZ.v += away * (wasNear ? 1.6 : 3.2);
+        state.squash.v -= wasNear ? .8 : 1.8;
+        wake();
+      }
+      wasNear = near;
+    });
 
     window.addEventListener('resize', () => {
       if (!moved) {
@@ -2185,6 +2235,7 @@
     const TAGS = [['Red', '#ff4d4d'], ['Orange', '#ff9f0a'], ['Yellow', '#ffd60a'], ['Green', '#32d74b'], ['Blue', '#0a84ff'], ['Purple', '#bf5af2'], ['Gray', '#98989d']];
 
     function open(node) {
+      markWelcomeRead(node);
       if (node.type === 'directory') {
         showFolder(node);
         return;
@@ -2943,6 +2994,19 @@
         wireDesktopIcon(item, node);
       }
     });
+
+    // the welcome note glows until it's been opened once (remembered per visitor)
+    const WELCOME_READ_KEY = 'welcome-read';
+    const welcomeNode = ROOT.children.find(n => n.name === CONFIG.welcomeFile);
+    if (welcomeNode && !readStore(WELCOME_READ_KEY, false)) {
+      desktopItems.get(welcomeNode)?.querySelector('.file')?.classList.add('beckon');
+    }
+    function markWelcomeRead(node) {
+      if (node === welcomeNode) {
+        writeStore(WELCOME_READ_KEY, true);
+        document.querySelectorAll('.beckon').forEach(icon => icon.classList.remove('beckon'));
+      }
+    }
 
     // switch the desktop to free positioning, so icons can be dragged anywhere
     function freezeDesktop() {
