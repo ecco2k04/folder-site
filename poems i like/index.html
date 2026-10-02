@@ -22,20 +22,19 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 13px;
       color: #1d1d1f;
-      /* the desktop wallpaper, on every page */
-      background: #f6d6dc url("../.system/wallpaper.jpg") center / cover fixed no-repeat;
+      background: #ece4e6;
       -webkit-font-smoothing: antialiased;
     }
-    /* film grain over the wallpaper, behind everything on the desktop */
+    /* the desktop wallpaper, on every page, toned down. it's its own layer
+       behind everything so it can be desaturated without touching the icons */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -1;
       pointer-events: none;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 180px 180px repeat;
-      opacity: .28;
-      mix-blend-mode: overlay;
+      background: url("../.system/wallpaper.jpg") center / cover no-repeat;
+      filter: saturate(.5); /* 1 = original colors, 0 = black and white */
     }
     main {
       box-sizing: border-box;
