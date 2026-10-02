@@ -1541,7 +1541,7 @@
 
   
   <script type="application/json" id="tree" data-root="photos &amp; friends">[{"name":"Screenshot 2026-09-30 at 10.48.18 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","modified":"2026-09-30T15:48:24.184Z","bytes":6572885,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.18%E2%80%AFAM.png","w":2434,"h":1552,"x":112,"y":0},{"name":"Screenshot 2026-09-30 at 10.48.27 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","modified":"2026-09-30T15:48:34.066Z","bytes":6344256,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.27%E2%80%AFAM.png","w":2140,"h":1610,"x":0,"y":112},{"name":"Screenshot 2026-09-30 at 10.48.33 AM.png","type":"image","href":"Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","modified":"2026-09-30T15:48:40.060Z","bytes":6777821,"thumb":".thumbs/Screenshot%202026-09-30%20at%2010.48.33%E2%80%AFAM.png","w":2170,"h":1592,"x":112,"y":112}]</script>
-  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","about":{"name":"Katie OS","version":"Version 1.0","blurb":"My first memories all had to do with creating art in the most eccentric and resourceful ways — I make things that touch people and make their lives easier.","specs":[["Processor","Design Engineer — HCI, Communication Design & Music @ WashU"],["Memory","Full of Wikipedia rabbit holes"],["Graphics","Graphic design background, product sense"],["Startup Disk","Guitar · Music Production · Video Editing · Hiking"]]},"clockTimeZone":"America/Chicago","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
+  <script type="application/json" id="site-config">{"musicUrl":"https://lustrous-douhua-61409b.netlify.app","about":{"name":"Katie OS","version":"Version 1.0","blurb":"Making cool stuff.","specs":[["Processor","Design Engineer — HCI, Communication Design & Music @ WashU"],["Memory","Full of Wikipedia rabbit holes"],["Graphics","Great"]]},"clockTimeZone":"America/Chicago","weather":{"city":"St. Louis","latitude":38.627,"longitude":-90.1994,"timezone":"America/Chicago"},"guestbook":{"supabaseUrl":"https://pwytdddzdrusvxwhrtxn.supabase.co","supabaseKey":"sb_publishable_LB7tRVmuVK8kGBFjmJKzzA_-r2-lMGc"}}</script>
 
   <header class="menubar">
     <nav class="menu-left" aria-label="Menu bar">
@@ -3489,6 +3489,9 @@
         specs.append(row);
       });
       win.querySelector('.about-more').addEventListener('click', openMessages);
+      // fit the window to however much text the config has
+      win.style.height = 'auto';
+      win.style.height = win.offsetHeight + 'px';
       // like the real one, it can't be minimized or zoomed
       win.querySelectorAll('.minimize, .zoom').forEach(b => { b.disabled = true; });
     }
