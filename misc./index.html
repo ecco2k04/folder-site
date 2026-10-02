@@ -302,9 +302,18 @@
 
     /* ---------- finder windows (macOS Tahoe) ---------- */
     .window-finder {
-      flex-direction: row;
       border-radius: 18px;
       background: white;
+    }
+    /* every window's content sits in .window-body, under the (retro-only) title bar */
+    .window-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .window-finder .window-body, .window-messages .window-body {
+      flex-direction: row;
     }
     .finder-sidebar {
       position: relative;
@@ -812,7 +821,6 @@
 
     /* ---------- messages (guestbook) ---------- */
     .window-messages {
-      flex-direction: row;
       border-radius: 18px;
     }
     .msg-sidebar {
@@ -1196,12 +1204,23 @@
     .pet[hidden] {
       display: none;
     }
-    .pet-canvas {
-      display: block;
+    .pet-stage {
+      position: relative;
       width: 220px;
       height: 220px;
       pointer-events: auto;
       touch-action: none;
+    }
+    .pet-canvas {
+      display: block;
+      width: 220px;
+      height: 220px;
+    }
+    .pet-pixel {
+      display: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
     .pet-bubble, .pet-prompt {
       box-sizing: border-box;
@@ -1514,6 +1533,1174 @@
       color: #1d1d1f;
       cursor: default;
     }
+    /* ---------- time travel switch (modern, Tahoe style) ---------- */
+    .time-travel {
+      position: fixed;
+      top: 214px;
+      right: 24px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 158px;
+      height: 44px;
+      padding: 0 12px 0 16px;
+      box-sizing: border-box;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .55);
+      box-shadow: 0 0 0 .5px rgba(0, 0, 0, .08), 0 8px 24px rgba(0, 0, 0, .12);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      backdrop-filter: blur(20px) saturate(1.6);
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d1d1f;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .tt-input {
+      /* hidden but still focusable and clickable through its label */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    .tt-switch {
+      position: relative;
+      flex: none;
+      width: 40px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(120, 120, 128, .3);
+      transition: background .2s;
+    }
+    .tt-switch::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .25), 0 0 0 .5px rgba(0, 0, 0, .04);
+      transition: transform .25s cubic-bezier(.3, 1.4, .5, 1);
+    }
+    .tt-input:checked + .tt-switch {
+      background: #34c759;
+    }
+    .tt-input:checked + .tt-switch::after {
+      transform: translateX(16px);
+    }
+    .tt-input:focus-visible + .tt-switch {
+      outline: 2px solid #0a84ff;
+      outline-offset: 2px;
+    }
+    .tt-input:disabled + .tt-switch {
+      opacity: .6;
+    }
+
+    /* ================= Katie 98 (Time Travel mode) ================= */
+    html:not(.retro) .retro-only {
+      display: none !important;
+    }
+    .retro-titlebar {
+      display: none;
+    }
+    :root {
+      --retro-font: Tahoma, "Segoe UI", Verdana, Geneva, sans-serif;
+      --retro-comic: "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive;
+      --bevel-out: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px #808080, inset 2px 2px #dfdfdf;
+      --bevel-in: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+    }
+    .retro body {
+      font-family: var(--retro-font);
+      background: #3a6ea5;
+    }
+    /* a made-up sunny-hills wallpaper, drawn with gradients */
+    .retro body::before {
+      filter: none;
+      background:
+        radial-gradient(ellipse 30% 9% at 24% 26%, rgba(255, 255, 255, .9), transparent 70%),
+        radial-gradient(ellipse 22% 7% at 33% 22%, rgba(255, 255, 255, .8), transparent 70%),
+        radial-gradient(ellipse 26% 8% at 72% 16%, rgba(255, 255, 255, .85), transparent 70%),
+        radial-gradient(ellipse 85% 42% at 25% 104%, #6cd146 0 56%, #4ea232 63%, transparent 64%),
+        radial-gradient(ellipse 100% 48% at 92% 112%, #48a832 0 57%, #3a8a28 60%, transparent 61%),
+        linear-gradient(#1f5fd6, #4f92f0 45%, #a9d3ff 72%, #dff0ff);
+    }
+    .retro .menubar, .retro .dock {
+      display: none;
+    }
+
+    /* ---------- desktop icons ---------- */
+    .retro main .label, .retro .retro-shortcut .label {
+      border-radius: 0;
+      color: white;
+      font: 11px var(--retro-font);
+      text-shadow: 1px 1px 0 #000;
+    }
+    .retro main .file.selected .label, .retro .retro-shortcut.selected .label {
+      background: #316ac5;
+      text-shadow: none;
+      outline: 1px dotted white;
+    }
+    .retro .file.selected .thumb {
+      border-color: transparent;
+      border-radius: 0;
+      background: rgba(49, 106, 197, .35);
+    }
+    .retro .icon-folder {
+      background-image: var(--px-folder);
+      background-size: 48px auto;
+      image-rendering: pixelated;
+    }
+    .retro .icon-file {
+      background-image: var(--px-file);
+      background-size: 39px auto;
+      image-rendering: pixelated;
+    }
+    .retro .icon .ext {
+      display: none;
+    }
+    .retro .thumb img, .retro .thumb video {
+      border: 1px solid #000;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, .4);
+    }
+    .retro .mini-icon.icon {
+      background-size: contain;
+    }
+    .retro .pathbar {
+      font-family: var(--retro-comic);
+      color: white;
+      text-shadow: 1px 1px 0 #000;
+      opacity: 1;
+    }
+    .retro-shortcuts {
+      position: fixed;
+      right: 20px;
+      bottom: 44px;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 88px);
+      gap: 4px 4px;
+    }
+    .retro-shortcut {
+      width: 88px;
+    }
+    .px-icon {
+      width: 48px;
+      height: 48px;
+      background: center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .retro-bin.full .px-icon {
+      background-image: var(--px-binFull) !important;
+    }
+
+    /* ---------- widgets ---------- */
+    .retro .weather {
+      padding: 24px 8px 8px;
+      border-radius: 0;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out), 4px 4px 0 rgba(0, 0, 0, .35);
+      color: #000;
+      font-family: var(--retro-font);
+    }
+    .retro .weather::before {
+      content: "Weather.exe";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      right: 3px;
+      height: 16px;
+      padding-left: 4px;
+      background: linear-gradient(90deg, #000080, #1084d0);
+      color: white;
+      font: bold 11px/16px var(--retro-font);
+    }
+    .retro .weather-city {
+      font-size: 11px;
+    }
+    .retro .weather-temp {
+      margin: 4px 0;
+      padding: 2px 8px;
+      background: #000;
+      box-shadow: var(--bevel-in);
+      color: #39ff14;
+      font: 34px/1.15 "Courier New", monospace;
+      text-shadow: 0 0 6px #39ff14;
+    }
+    .retro .weather-cond {
+      font-size: 11px;
+    }
+    .retro .time-travel {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 8px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 0;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out), 4px 4px 0 rgba(0, 0, 0, .35);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      color: #000;
+      font: bold 12px var(--retro-font);
+    }
+    /* the Tahoe switch becomes a chunky checkbox */
+    .retro .tt-switch {
+      width: 15px;
+      height: 15px;
+      border-radius: 0;
+      background: white !important;
+      box-shadow: var(--bevel-in);
+    }
+    .retro .tt-switch::after {
+      content: "✓";
+      top: -2px;
+      left: 2px;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      transform: none !important;
+      font: 900 13px var(--retro-font);
+      color: #000;
+    }
+    .retro-badges {
+      position: fixed;
+      top: 262px;
+      right: 24px;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 158px;
+      font-family: var(--retro-font);
+      pointer-events: none;
+    }
+    .visitor-counter {
+      width: 100%;
+      padding: 5px 6px;
+      box-sizing: border-box;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out), 4px 4px 0 rgba(0, 0, 0, .35);
+      font-size: 10px;
+      text-align: center;
+    }
+    .odometer {
+      display: inline-block;
+      margin-top: 3px;
+      padding: 1px 5px;
+      background: #000;
+      box-shadow: var(--bevel-in);
+      color: #ff3b3b;
+      font: bold 17px "Courier New", monospace;
+      letter-spacing: 3px;
+    }
+    .construction {
+      width: 100%;
+      padding: 5px 0;
+      background: repeating-linear-gradient(45deg, #ffd400 0 10px, #111 10px 20px);
+      color: white;
+      font: bold 11px var(--retro-comic);
+      text-align: center;
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+      animation: retro-blink 1s steps(2) infinite;
+    }
+    .new-badge {
+      padding: 2px 10px;
+      background: #ff0000;
+      color: #ffff00;
+      font: bold 15px var(--retro-comic);
+      box-shadow: 3px 3px 0 #000;
+      animation: retro-wobble .6s ease-in-out infinite alternate;
+    }
+    @keyframes retro-blink {
+      50% { filter: brightness(1.6) hue-rotate(20deg); }
+    }
+    @keyframes retro-wobble {
+      from { transform: rotate(-8deg); }
+      to { transform: rotate(8deg) scale(1.1); }
+    }
+    .retro-marquee {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100001;
+      height: 26px;
+      overflow: hidden;
+      background: #000;
+      border-bottom: 2px ridge #ff00ff;
+      color: #39ff14;
+      font: bold 14px/26px var(--retro-comic);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .retro-marquee b {
+      color: #ff66ff;
+    }
+    .retro-marquee-track {
+      display: inline-flex;
+      animation: retro-marquee 26s linear infinite;
+    }
+    .retro-marquee-track span {
+      padding-right: 80px;
+    }
+    @keyframes retro-marquee {
+      to { transform: translateX(-50%); }
+    }
+    .sparkle {
+      position: fixed;
+      z-index: 200001;
+      font-size: 14px;
+      pointer-events: none;
+      text-shadow: 0 0 4px currentColor;
+      transform: translate(-50%, -50%);
+      animation: retro-sparkle .85s ease-out forwards;
+    }
+    @keyframes retro-sparkle {
+      to { opacity: 0; transform: translate(-50%, 22px) scale(.4) rotate(120deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .retro-marquee-track, .construction, .new-badge {
+        animation: none;
+      }
+    }
+
+    /* ---------- taskbar + start menu ---------- */
+    .taskbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 32px;
+      background: linear-gradient(#3168d5, #4993e6 8%, #2157d7 40%, #2663e0 88%, #1941a5);
+      box-shadow: inset 0 1px #6a9bf0;
+      font-family: var(--retro-font);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .start-button {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 100%;
+      padding: 0 20px 0 8px;
+      border: 0;
+      border-radius: 0 14px 14px 0;
+      background: linear-gradient(#3c9a3c, #63cf63 12%, #3c9a3c 50%, #2b7a2b);
+      box-shadow: inset 0 1px rgba(255, 255, 255, .5), 2px 0 5px rgba(0, 0, 0, .45);
+      color: white;
+      font: italic bold 17px var(--retro-font);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, .6);
+      cursor: default;
+    }
+    .start-button img {
+      width: 28px;
+      height: auto;
+      image-rendering: pixelated;
+    }
+    .start-button.open {
+      filter: brightness(.82);
+    }
+    .taskbar-windows {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      gap: 3px;
+      padding: 0 4px;
+      overflow: hidden;
+    }
+    .task-button {
+      flex: 0 1 160px;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 24px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 3px;
+      background: linear-gradient(#5b93f0, #3b77e6);
+      box-shadow: inset 0 1px rgba(255, 255, 255, .35), 0 0 0 1px rgba(0, 0, 40, .35);
+      color: white;
+      font: 11px var(--retro-font);
+      cursor: default;
+    }
+    .task-button.active {
+      background: linear-gradient(#1e4fb8, #2a62d6);
+      box-shadow: inset 1px 1px 3px rgba(0, 0, 0, .5);
+    }
+    .task-icon {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      background: center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .task-label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .tray {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      padding: 0 14px;
+      background: linear-gradient(#1290e9, #19b9f3 10%, #1597e9 90%, #1376c5);
+      box-shadow: inset 1px 0 #0d5fb0, inset 2px 0 #4cc3f5;
+      color: white;
+      font-size: 11px;
+    }
+    .start-menu {
+      position: fixed;
+      left: 2px;
+      bottom: 34px;
+      z-index: 100003;
+      display: flex;
+      min-width: 230px;
+      padding: 3px;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out), 4px 4px 0 rgba(0, 0, 0, .35);
+      font-family: var(--retro-font);
+    }
+    .start-stripe {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      width: 28px;
+      padding-bottom: 8px;
+      background: linear-gradient(#ff00cc, #3333ff 50%, #000080);
+    }
+    .start-stripe span {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      color: white;
+      font: bold 19px var(--retro-font);
+    }
+    .start-stripe b {
+      color: #ffff66;
+    }
+    .start-items {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2px 0;
+    }
+    .start-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 32px;
+      padding: 0 18px 0 8px;
+      border: 0;
+      background: none;
+      font: 12px var(--retro-font);
+      color: #000;
+      text-align: left;
+      cursor: default;
+    }
+    .start-item:hover {
+      background: #000080;
+      color: white;
+    }
+    .start-item .px {
+      flex: none;
+      width: 24px;
+      height: 24px;
+      background: center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .start-sep {
+      margin: 3px 2px;
+      border-top: 1px solid #808080;
+      border-bottom: 1px solid white;
+    }
+
+    /* ---------- windows: XP-ish frames around 98-ish insides ---------- */
+    .retro .window {
+      border: 3px solid #0058ee;
+      border-top: 0;
+      border-radius: 8px 8px 0 0;
+      background: #ece9d8;
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, .3);
+      color: #000;
+      font-family: var(--retro-font);
+      animation: none;
+    }
+    .retro .window.inactive {
+      border-color: #7a96df;
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, .18);
+    }
+    .retro .window.closing {
+      animation: none;
+      opacity: 0;
+    }
+    .retro .retro-titlebar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      padding: 0 3px 0 6px;
+      background: linear-gradient(#0997ff, #0053ee 8%, #0050ee 40%, #0066ff 88%, #003dd7);
+      color: white;
+      font: bold 13px var(--retro-font);
+      text-shadow: 1px 1px #0a1883;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .retro .window.inactive .retro-titlebar {
+      background: linear-gradient(#a6b8e8, #7b9ce0 50%, #8aa6e6);
+      color: #dfe8fa;
+      text-shadow: none;
+    }
+    .retro-icon {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      background: center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .retro-title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .retro-buttons {
+      display: flex;
+      gap: 2px;
+    }
+    .retro-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 21px;
+      height: 21px;
+      padding: 0;
+      border: 1px solid white;
+      border-radius: 3px;
+      background: linear-gradient(135deg, #4a96ff, #1450d8);
+      color: white;
+      font: bold 13px/1 var(--retro-font);
+      cursor: default;
+    }
+    .retro-close {
+      background: linear-gradient(135deg, #f0906a, #d6411d);
+    }
+    .retro .lights, .retro .window-body > .titlebar {
+      display: none;
+    }
+    .retro .doc {
+      font: 13px/1.5 "Courier New", monospace;
+    }
+    .retro-button {
+      min-width: 75px;
+      height: 23px;
+      border: 1px solid #003c74;
+      border-radius: 3px;
+      background: linear-gradient(#ffffff, #ece9d8 85%, #d6d0c5);
+      font: 11px var(--retro-font);
+      color: #000;
+      cursor: default;
+    }
+    .retro-button:focus-visible {
+      outline: 1px dotted #000;
+      outline-offset: -4px;
+    }
+
+    /* finder becomes a file explorer */
+    .retro .window-finder {
+      border-radius: 8px 8px 0 0;
+    }
+    .retro .finder-sidebar {
+      width: 168px;
+      margin: 0;
+      padding: 10px 8px;
+      border-radius: 0;
+      background: linear-gradient(#7ba2e7, #6375d6);
+      box-shadow: none;
+    }
+    .retro .sb-section {
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(90deg, #ffffff, #c6d3f7);
+      color: #215dc6;
+      font: bold 11px var(--retro-font);
+    }
+    .retro .sb-item {
+      min-height: 22px;
+      border-radius: 0;
+      background: #d6dff7;
+      color: #0c32a8;
+      font: 11px var(--retro-font);
+    }
+    .retro .sb-item:hover {
+      color: #2b7aff;
+      text-decoration: underline;
+    }
+    .retro .sb-item.current {
+      background: white;
+      font-weight: bold;
+    }
+    .retro .sb-item svg {
+      color: #e2a300;
+    }
+    .retro .finder-toolbar {
+      height: 38px;
+      background: #ece9d8;
+      border-bottom: 1px solid #aca899;
+    }
+    .retro .tb-group {
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+    .retro .tb-btn {
+      width: 30px;
+      height: 26px;
+      border-radius: 3px;
+      color: #000;
+    }
+    .retro .tb-btn:hover:not(:disabled) {
+      box-shadow: var(--bevel-out);
+    }
+    .retro .tb-btn.active {
+      background: white;
+      box-shadow: var(--bevel-in);
+    }
+    .retro .tb-search {
+      height: 22px;
+      border-radius: 0;
+      background: white;
+      box-shadow: var(--bevel-in);
+    }
+    .retro .finder-title {
+      font: bold 14px var(--retro-font);
+      color: #000;
+    }
+    .retro .finder-content {
+      margin: 0 4px;
+      background: white;
+      box-shadow: var(--bevel-in);
+    }
+    .retro .finder-pathbar {
+      background: #ece9d8;
+      border-top: 1px solid #aca899;
+      color: #000;
+    }
+    .retro .window .label {
+      font: 11px var(--retro-font);
+    }
+    .retro .finder-list th {
+      background: #ece9d8;
+      box-shadow: var(--bevel-out);
+      font: 11px var(--retro-font);
+      color: #000;
+    }
+    .retro .finder-list tr.row td {
+      border-radius: 0 !important;
+      background: none !important;
+      font-size: 11px;
+    }
+    .retro .finder-list tr.row.selected td {
+      background: #316ac5 !important;
+      color: white;
+    }
+    .retro .trash-bar {
+      border-radius: 0;
+      background: #ffffe1;
+      border: 1px solid #000;
+    }
+
+    /* messages becomes an instant messenger */
+    .retro .msg-sidebar {
+      display: none;
+    }
+    .retro .msg-header {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 8px;
+      padding: 6px 10px;
+      background: #ece9d8;
+      border-bottom: 1px solid #aca899;
+    }
+    .retro .msg-header .avatar-group {
+      display: none;
+    }
+    .retro .msg-header-name {
+      margin: 0;
+      font: bold 13px var(--retro-font);
+    }
+    .retro .msg-header-name::after {
+      content: " - Instant Message";
+      font-weight: normal;
+    }
+    .retro .msg-header-sub {
+      font-size: 11px;
+      color: #555;
+    }
+    .retro .msg-list {
+      gap: 0;
+      margin: 6px;
+      background: white;
+      box-shadow: var(--bevel-in);
+      font: 13px var(--retro-font);
+    }
+    .retro .msg-row {
+      justify-content: flex-start !important;
+      margin: 0 !important;
+    }
+    .retro .msg-row .avatar, .retro .msg-receipt {
+      display: none;
+    }
+    .retro .msg-stack {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 5px;
+      max-width: 100%;
+    }
+    .retro .msg-sender {
+      margin: 0;
+      font: bold 13px var(--retro-font);
+      color: #0000ff;
+    }
+    .retro .msg-sender::after {
+      content: ":";
+    }
+    .retro .msg-row.mine .msg-stack::before {
+      content: "You:";
+      font: bold 13px var(--retro-font);
+      color: #ff0000;
+    }
+    .retro .bubble {
+      padding: 1px 0;
+      border-radius: 0;
+      background: none !important;
+      color: #000 !important;
+      font: 13px var(--retro-font);
+    }
+    .retro .bubble::before, .retro .bubble::after {
+      content: none !important;
+    }
+    .retro .msg-stamp {
+      margin: 6px 0;
+      font: italic 11px var(--retro-font);
+    }
+    .retro .msg-compose {
+      background: #ece9d8;
+    }
+    .retro .msg-name, .retro .msg-field {
+      border-radius: 0;
+      background: white;
+      box-shadow: var(--bevel-in);
+      font-family: var(--retro-font);
+    }
+    .retro .msg-send {
+      width: auto;
+      height: 22px;
+      padding: 0 10px;
+      border-radius: 3px;
+      background: #ece9d8 !important;
+      box-shadow: var(--bevel-out);
+      color: #000;
+      font: 11px var(--retro-font);
+    }
+    .retro .msg-send svg {
+      display: none;
+    }
+    .retro .msg-send::after {
+      content: "Send";
+    }
+    .retro .msg-send:disabled {
+      color: #999;
+    }
+
+    /* about */
+    .retro .about {
+      font-family: var(--retro-font);
+    }
+    .retro .about-logo {
+      border-radius: 0;
+      background: var(--px-computer) center / 64px no-repeat;
+      box-shadow: none;
+      image-rendering: pixelated;
+    }
+    .retro .about-logo svg {
+      display: none;
+    }
+    .retro .about-name::after {
+      content: " 98";
+      color: #e00;
+      font-style: italic;
+    }
+    .retro .about-more {
+      border-radius: 3px;
+      background: #ece9d8;
+      box-shadow: var(--bevel-out);
+    }
+
+    /* error pop-ups */
+    .dialog {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      align-content: center;
+      gap: 14px;
+      padding: 14px 18px 12px;
+      background: #ece9d8;
+    }
+    .dialog-icon {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      background: var(--px-error) center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .dialog-text {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      font: 12px/1.4 var(--retro-font);
+      white-space: pre-line;
+    }
+    .dialog-buttons {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* paint */
+    .paint {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 4px;
+      padding: 4px;
+      background: #c0c0c0;
+    }
+    .paint-tools {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .paint-tool {
+      height: 28px;
+      padding: 0;
+      border: 0;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out);
+      font: 10px var(--retro-font);
+      cursor: default;
+    }
+    .paint-tool.active {
+      background: white;
+      box-shadow: var(--bevel-in);
+    }
+    .paint-canvas-wrap {
+      overflow: auto;
+      padding: 4px;
+      background: #808080;
+      box-shadow: var(--bevel-in);
+    }
+    .paint-canvas {
+      display: block;
+      background: white;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .paint-palette {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .paint-current {
+      width: 30px;
+      height: 30px;
+      box-shadow: var(--bevel-in);
+    }
+    .paint-swatches {
+      display: grid;
+      grid-template-columns: repeat(8, 16px);
+      gap: 1px;
+    }
+    .paint-swatch {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      border: 0;
+      box-shadow: var(--bevel-in);
+      cursor: default;
+    }
+
+    /* minesweeper */
+    .mines {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      background: #c0c0c0;
+    }
+    .mines-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 204px;
+      padding: 4px;
+      box-sizing: border-box;
+      box-shadow: var(--bevel-in);
+    }
+    .mines-lcd {
+      min-width: 42px;
+      padding: 0 2px;
+      background: #000;
+      color: #ff0000;
+      font: bold 22px/26px "Courier New", monospace;
+      text-align: right;
+    }
+    .mines-face {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out);
+      font-size: 17px;
+      cursor: default;
+    }
+    .mines-face:active {
+      box-shadow: var(--bevel-in);
+    }
+    .mines-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 22px);
+      padding: 3px;
+      box-shadow: var(--bevel-in);
+    }
+    .mine-cell {
+      width: 22px;
+      height: 22px;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out);
+      font: bold 14px/22px var(--retro-font);
+      text-align: center;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .mine-cell.open {
+      box-shadow: inset 1px 1px #808080;
+    }
+    .mine-cell.boom {
+      background: #ff0000;
+    }
+
+    /* boot and shut down screens */
+    .boot-screen, .shutdown-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 300000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      background: #000;
+      color: white;
+      font-family: var(--retro-font);
+      text-align: center;
+      cursor: default;
+    }
+    .boot-screen {
+      animation: retro-fade-in .25s ease-out;
+    }
+    .boot-screen.done {
+      animation: retro-fade-out .35s ease-in forwards;
+    }
+    @keyframes retro-fade-in {
+      from { opacity: 0; }
+    }
+    @keyframes retro-fade-out {
+      to { opacity: 0; }
+    }
+    .boot-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .boot-croissant {
+      width: 160px;
+      height: 72px;
+      background: var(--px-croissant) center / contain no-repeat;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 0 18px rgba(255, 180, 60, .6));
+    }
+    .boot-title {
+      background: linear-gradient(90deg, #ff3b3b, #ffb000, #39ff14, #00c8ff, #b44bff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font: italic bold 54px var(--retro-font);
+    }
+    .boot-title span {
+      margin-left: 4px;
+      font-size: 30px;
+      vertical-align: super;
+      -webkit-text-fill-color: white;
+    }
+    .boot-edition {
+      color: #aaa;
+      font-size: 12px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+    .boot-bar {
+      width: 220px;
+      height: 18px;
+      padding: 2px;
+      box-sizing: border-box;
+      border: 2px solid #888;
+      border-radius: 3px;
+    }
+    .boot-bar span {
+      display: block;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, #2b5be0 0 10px, transparent 10px 14px);
+      animation: retro-boot-bar var(--boot-ms, 2.4s) steps(15) forwards;
+    }
+    @keyframes retro-boot-bar {
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+    .boot-text {
+      color: #ccc;
+      font-size: 12px;
+    }
+    .shutdown-screen {
+      gap: 14px;
+      color: #ff8c00;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .shutdown-screen p {
+      margin: 0;
+    }
+    .shutdown-screen small {
+      color: #777;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    /* the croissant, pixelated, with a yellow "tip" balloon */
+    .retro .pet-canvas {
+      visibility: hidden;
+    }
+    .retro .pet-pixel {
+      display: block;
+    }
+    .pet-pixel-art {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 120px;
+      height: 54px;
+      margin: -27px 0 0 -60px;
+      background: var(--px-croissant) center / contain no-repeat;
+      image-rendering: pixelated;
+    }
+    .pet-pixel-shadow {
+      position: absolute;
+      left: 50%;
+      top: calc(50% + 32px);
+      width: 108px;
+      height: 12px;
+      margin-left: -50px;
+      background: rgba(0, 30, 0, .32);
+      clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+    }
+    .retro .pet-bubble {
+      padding: 8px 12px 10px;
+      border: 1px solid #000;
+      border-radius: 8px;
+      background: #ffffe1;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, .35);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    .retro .pet-bubble::before, .retro .pet-bubble::after {
+      content: "";
+      position: absolute;
+      left: 46%;
+      border: 12px solid transparent;
+      border-bottom: 0;
+    }
+    .retro .pet-bubble::before {
+      bottom: -13px;
+      border-top-color: #000;
+    }
+    .retro .pet-bubble::after {
+      bottom: -11px;
+      border-top-color: #ffffe1;
+    }
+    .retro .pet.bubble-below .pet-bubble::before, .retro .pet.bubble-below .pet-bubble::after {
+      display: none;
+    }
+    .retro .pet-from {
+      color: #000;
+      font: bold 11px var(--retro-font);
+      letter-spacing: 0;
+    }
+    .retro .pet-from::before {
+      content: "💡 Tip from ";
+      font-weight: normal;
+    }
+    .retro .pet-text {
+      font: 13px var(--retro-font);
+    }
+    .retro .pet-close {
+      width: 18px;
+      height: 18px;
+      border: 0;
+      border-radius: 0;
+      background: #c0c0c0;
+      box-shadow: var(--bevel-out);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      color: #000;
+      font: bold 12px/1 var(--retro-font);
+    }
+    .retro .pet-prompt {
+      height: 28px;
+      border: 0;
+      border-radius: 0;
+      background: white;
+      box-shadow: var(--bevel-in), 3px 3px 0 rgba(0, 0, 0, .3);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      color: #000;
+    }
+    .retro .pet-prompt input {
+      font: 12px var(--retro-font);
+    }
+
 
     /* finder icon view: name-sorted grid */
     .plantbed {
@@ -1571,6 +2758,12 @@
     <div class="weather-cond"><span class="weather-icon"></span><span class="weather-text"></span></div>
   </div>
 
+  <label class="widget time-travel">
+    <span class="tt-label">Time Travel</span>
+    <input class="tt-input" type="checkbox" role="switch">
+    <span class="tt-switch" aria-hidden="true"></span>
+  </label>
+
   <nav class="dock" aria-label="Dock">
     
     <button class="dock-item dock-finder running" type="button" aria-label="Finder">
@@ -1602,7 +2795,11 @@
       <div class="pet-text"></div>
     </div>
     <button class="pet-close" type="button" aria-label="Dismiss" hidden>×</button>
-    <canvas class="pet-canvas" aria-label="A croissant. Drag it around."></canvas>
+    <div class="pet-stage">
+      <canvas class="pet-canvas" aria-label="A croissant. Drag it around."></canvas>
+      
+      <div class="pet-pixel" aria-hidden="true"><span class="pet-pixel-shadow"></span><span class="pet-pixel-art"></span></div>
+    </div>
     <form class="pet-prompt">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.6 10.6 3.4 3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       <input type="text" placeholder="Ask the croissant something" aria-label="Ask the croissant something" maxlength="200" autocomplete="off">
@@ -1684,6 +2881,11 @@
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const root = document.querySelector('.pet');
     const canvas = root.querySelector('.pet-canvas');
+    const stage = root.querySelector('.pet-stage');
+    const pixelArt = root.querySelector('.pet-pixel-art');
+    const pixelShadow = root.querySelector('.pet-pixel-shadow');
+    // in Time Travel mode the croissant is pixel art instead of 3d
+    const retro = () => document.documentElement.classList.contains('retro');
     const bubble = root.querySelector('.pet-bubble');
     const bubbleText = root.querySelector('.pet-text');
     const closeButton = root.querySelector('.pet-close');
@@ -1848,7 +3050,13 @@
       pivot.rotation.set(state.tiltX.x, state.yaw.x, state.tiltZ.x);
       pivot.position.y = state.lift.x + halfHeight * s * squash;
       root.style.transform = `translate(${state.x}px, ${state.y}px)`;
-      renderer.render(scene, camera);
+      if (retro()) {
+        const liftPx = (state.lift.x - REST_LIFT) * 140;
+        pixelArt.style.transform = `translateY(${-liftPx}px) rotate(${-state.tiltZ.x}rad) scale(${s / Math.sqrt(squash)}, ${s * squash})`;
+        pixelShadow.style.transform = `scale(${Math.max(.5, 1 - liftPx / 120)})`;
+      } else {
+        renderer.render(scene, camera);
+      }
       positionBubble();
 
       // stop drawing once everything has settled
@@ -1862,6 +3070,10 @@
     // only grab the croissant itself, not the empty corners of its canvas
     const raycaster = new THREE.Raycaster();
     function hitsCroissant(e) {
+      if (retro()) {
+        const box = pixelArt.getBoundingClientRect();
+        return e.clientX >= box.left - 6 && e.clientX <= box.right + 6 && e.clientY >= box.top - 6 && e.clientY <= box.bottom + 6;
+      }
       const rect = canvas.getBoundingClientRect();
       const ndc = new THREE.Vector2(
         ((e.clientX - rect.left) / rect.width) * 2 - 1,
@@ -1871,20 +3083,20 @@
       return raycaster.intersectObject(pivot, true).length > 0;
     }
 
-    canvas.addEventListener('pointermove', e => {
+    stage.addEventListener('pointermove', e => {
       if (!state.dragging) {
-        canvas.style.cursor = hitsCroissant(e) ? 'grab' : '';
+        stage.style.cursor = hitsCroissant(e) ? 'grab' : '';
       }
     });
 
-    canvas.addEventListener('pointerdown', e => {
+    stage.addEventListener('pointerdown', e => {
       if (e.button !== 0 || !hitsCroissant(e)) {
         return;
       }
       e.preventDefault();
       e.stopPropagation();
       try {
-        canvas.setPointerCapture(e.pointerId); // keep dragging even off the canvas
+        stage.setPointerCapture(e.pointerId); // keep dragging even off the canvas
       } catch { }
       Object.assign(state, {
         dragging: true,
@@ -1896,7 +3108,7 @@
       moved = true;
       state.falling = false; // caught mid-air
       state.squash.v += 3; // a little squeeze when picked up
-      canvas.style.cursor = 'grabbing';
+      stage.style.cursor = 'grabbing';
       wake();
     });
     // recent cursor positions, to measure how hard it was thrown
@@ -1906,11 +3118,11 @@
       samples.push({ t, x: e.clientX, y: e.clientY });
       samples = samples.filter(s => t - s.t < 100);
     };
-    canvas.addEventListener('pointerdown', e => {
+    stage.addEventListener('pointerdown', e => {
       samples = [];
       sample(e);
     });
-    canvas.addEventListener('pointermove', e => {
+    stage.addEventListener('pointermove', e => {
       if (state.dragging) {
         state.pointerX = e.clientX;
         state.pointerY = e.clientY;
@@ -1922,7 +3134,7 @@
         return;
       }
       state.dragging = false;
-      canvas.style.cursor = 'grab';
+      stage.style.cursor = 'grab';
       // throw at the speed the cursor was moving just before letting go.
       // (lost capture or switching apps just drops it, with no throw)
       if (e.type === 'pointerup') {
@@ -1946,16 +3158,18 @@
       }
       wake();
     };
-    canvas.addEventListener('pointerup', letGo);
-    canvas.addEventListener('pointercancel', letGo);
+    stage.addEventListener('pointerup', letGo);
+    stage.addEventListener('pointercancel', letGo);
     // a mouse released outside the browser, or switching apps mid-drag, can
     // skip pointerup; without these it would stay "held" forever
-    canvas.addEventListener('lostpointercapture', letGo);
+    stage.addEventListener('lostpointercapture', letGo);
     window.addEventListener('blur', letGo);
 
     // macOS can reset the graphics context (e.g. switching GPUs); three.js
     // rebuilds it, but the croissant has to be drawn again
     canvas.addEventListener('webglcontextrestored', wake);
+    // redraw in the right style when Time Travel is switched on or off
+    window.addEventListener('retro-change', wake);
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
         wake();
@@ -2361,11 +3575,18 @@
     }
 
     /* ---------- windows ---------- */
+    // an old-school title bar, hidden until Time Travel mode switches it on
+    const RETRO_TITLEBAR =
+      '<div class="retro-titlebar drag-region"><span class="retro-icon"></span><span class="retro-title"></span>' +
+      '<span class="retro-buttons"><button class="retro-btn retro-min" type="button" aria-label="Minimize">_</button>' +
+      '<button class="retro-btn retro-max" type="button" aria-label="Maximize">□</button>' +
+      '<button class="retro-btn retro-close" type="button" aria-label="Close">×</button></span></div>';
+
     // creates a positioned, focusable, draggable window
     function makeWindow(className, w, h, html, entry) {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const win = el('div', 'window ' + className, html);
+      const win = el('div', 'window ' + className, RETRO_TITLEBAR + `<div class="window-body">${html}</div>`);
       win.setAttribute('role', 'dialog');
       win.entry = entry;
       // cascade new windows down and to the right, like Finder
@@ -2378,6 +3599,8 @@
       });
       Object.assign(entry, { win, mini: null });
       windows.add(entry);
+      // the retro title bar and taskbar show the window's name, which is often set just after this
+      new MutationObserver(updateTaskbar).observe(win, { attributes: true, attributeFilter: ['aria-label'] });
       document.body.append(win);
       wireWindow(entry);
       focus(win);
@@ -2443,6 +3666,10 @@
       win.querySelector('.close').addEventListener('click', () => close(entry));
       win.querySelector('.minimize').addEventListener('click', () => minimize(entry));
       win.querySelector('.zoom').addEventListener('click', () => zoom(entry));
+      // the retro title bar's buttons do the same, unless the modern one is disabled
+      [['.retro-close', '.close'], ['.retro-min', '.minimize'], ['.retro-max', '.zoom']].forEach(([retroButton, modern]) => {
+        win.querySelector(retroButton).addEventListener('click', () => win.querySelector(modern).click());
+      });
       win.addEventListener('dblclick', e => {
         if (e.target.closest('.drag-region') && !e.target.closest(NOT_DRAGGABLE)) {
           zoom(entry);
@@ -2508,7 +3735,8 @@
       entry.mini = mini;
 
       const from = win.getBoundingClientRect();
-      const to = mini.getBoundingClientRect();
+      // shrink toward its taskbar button in Time Travel mode, the dock otherwise
+      const to = (retroTaskButton(entry) || mini).getBoundingClientRect();
       win.animate([
         { transformOrigin: 'top left', transform: 'none', opacity: 1 },
         {
@@ -2525,7 +3753,7 @@
 
     function restore(entry) {
       const { win, mini } = entry;
-      const from = mini.getBoundingClientRect();
+      const from = (retroTaskButton(entry) || mini).getBoundingClientRect();
       win.style.display = '';
       const to = win.getBoundingClientRect();
       mini.remove();
@@ -2805,6 +4033,7 @@
       const total = folder.children.length;
       count.textContent = `${total} item${total === 1 ? '' : 's'}`;
       pathbar.append(count);
+      updateTaskbar(); // window titles follow the folder
     }
 
     function emptyTrash() {
@@ -2833,6 +4062,8 @@
         }
       });
       trash.classList.toggle('full', TRASH.children.length > 0);
+      document.querySelector('.retro-bin')?.classList.toggle('full', TRASH.children.length > 0);
+      updateTaskbar();
     }
 
     /* ================= drag and drop ================= */
@@ -3307,6 +4538,10 @@
       if (!entry || entry.kind === 'finder') return 'Finder';
       if (entry.kind === 'messages') return 'Messages';
       if (entry.kind === 'about') return 'Katie OS';
+      // the Time Travel apps
+      if (entry.kind === 'paint') return 'Paint';
+      if (entry.kind === 'mines') return 'Minesweeper';
+      if (!entry.node) return 'Katie 98';
       const type = entry.node.type;
       if (type === 'image' || type === 'pdf') return 'Preview';
       if (type === 'video') return 'QuickTime Player';
@@ -3316,6 +4551,7 @@
 
     function updateMenubar() {
       appTitle.textContent = appNameFor(activeEntry());
+      updateTaskbar();
     }
 
     /* ---------- menus ---------- */
@@ -3510,6 +4746,783 @@
       }).formatToParts(new Date()).map(p => [p.type, p.value]));
       clock.textContent = `${parts.weekday} ${parts.month} ${parts.day}  ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
       clock.title = 'Central Time (St. Louis)';
+      // the Time Travel taskbar shows just the time
+      const tray = document.querySelector('.tray-clock');
+      if (tray) {
+        tray.textContent = `${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
+      }
+    }
+
+    /* ================= time travel: katie 98 ================= */
+    // the "Time Travel" switch reskins the whole desktop as a gaudy late-90s /
+    // early-2000s mash-up. it's never remembered: every visit starts in Tahoe.
+    // all the art and names here are made up (a parody, not real Windows assets).
+    const htmlRoot = document.documentElement;
+    const isRetro = () => htmlRoot.classList.contains('retro');
+    const retroReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const BOOT_MS = retroReducedMotion ? 600 : 2400;
+    const FIRST_ERROR_MS = 14000;
+    const ERROR_EVERY_MS = [45000, 90000]; // a random gap between pop-ups
+    const RETRO_ONLY_KINDS = ['dialog', 'paint', 'mines'];
+
+    /* ---------- pixel art ---------- */
+    // each row is a line of pixels; each character is a palette color ('.' is clear)
+    const PIXEL_ART = {
+      folder: {
+        palette: { K: '#000', L: '#fff6b0', Y: '#ffd54a', D: '#c99a00' },
+        rows: [
+          '.KKKKK..........',
+          'KLLLLLK.........',
+          'KLYYYYYKKKKKKKK.',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KLYYYYYYYYYYYYYK',
+          'KDDDDDDDDDDDDDDK',
+          '.KKKKKKKKKKKKKK.',
+        ],
+      },
+      file: {
+        palette: { K: '#000', W: '#fff', G: '#5b5bff' },
+        rows: [
+          'KKKKKKKKK....',
+          'KWWWWWWWKK...',
+          'KWGGGGGWKWK..',
+          'KWWWWWWWKKKK.',
+          'KWGGGGGGGGWK.',
+          'KWWWWWWWWWWK.',
+          'KWGGGGGGGGWK.',
+          'KWWWWWWWWWWK.',
+          'KWGGGGGGGGWK.',
+          'KWWWWWWWWWWK.',
+          'KWGGGGGGGGWK.',
+          'KWWWWWWWWWWK.',
+          'KKKKKKKKKKKK.',
+        ],
+      },
+      bin: {
+        palette: { K: '#000', W: '#fff', S: '#9a9a9a' },
+        rows: [
+          '..............',
+          '..............',
+          '..KKKKKKKKKK..',
+          '.KSSSSSSSSSSK.',
+          'KKKKKKKKKKKKKK',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '..KWSWSWSWSK..',
+          '..KSWSWSWSWK..',
+          '..KKKKKKKKKK..',
+        ],
+      },
+      binFull: {
+        palette: { K: '#000', W: '#fff', S: '#9a9a9a', P: '#fffbe6', R: '#b8b0a0' },
+        rows: [
+          '....PPP..PP...',
+          '...PPRPPPRPP..',
+          '..KKKKKKKKKK..',
+          '.KSSSSSSSSSSK.',
+          'KKKKKKKKKKKKKK',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '.KWSWSWSWSWSK.',
+          '.KSWSWSWSWSWK.',
+          '..KWSWSWSWSK..',
+          '..KSWSWSWSWK..',
+          '..KKKKKKKKKK..',
+        ],
+      },
+      computer: {
+        palette: { K: '#000', S: '#c0c0c0', B: '#008080', C: '#7fffff', G: '#00d000' },
+        rows: [
+          '.KKKKKKKKKKKKK..',
+          '.KSSSSSSSSSSSK..',
+          '.KSKKKKKKKKKSK..',
+          '.KSKBBBBBBBKSK..',
+          '.KSKBCBBBBBKSK..',
+          '.KSKBBBBBBBKSK..',
+          '.KSKBBBBBBBKSK..',
+          '.KSKKKKKKKKKSK..',
+          '.KSSSSSSSSSGSK..',
+          '.KKKKKKKKKKKKK..',
+          '....KSSSSSK.....',
+          '..KKKKKKKKKKK...',
+          '..KSSSSSSSSSK...',
+          '..KKKKKKKKKKK...',
+        ],
+      },
+      croissant: {
+        palette: { K: '#5a2a0a', H: '#ffd27a', O: '#d9822b', D: '#9c5212' },
+        rows: [
+          '.....KKKKKKKKKK.....',
+          '...KKHHHHKHHHHHKK...',
+          '..KHHOOOKOOOOKOOHK..',
+          '.KHOOOOKOOOOOKOOOOK.',
+          'KHOOOOKOOOOOOOKOOOOK',
+          'KOOOOOKOOOOOOOKOOOOK',
+          'KOOOOKDOOOOOOODKOOOK',
+          '.KOOKDDKKKKKKKDDKOK.',
+          '..KKK..........KKK..',
+        ],
+      },
+      paint: {
+        palette: { K: '#000', W: '#fff', R: '#ff0000', Y: '#ffff00', B: '#0000ff', G: '#00c000', P: '#c000c0', N: '#8b4513' },
+        rows: [
+          'KKKKKKKKKKKKKK',
+          'KWWWWWWWWWWWWK',
+          'KWRRWWWWWWBBWK',
+          'KWRRWWYYWWBBWK',
+          'KWWWWWYYWWWWWK',
+          'KWWGGWWWWWWWNK',
+          'KWWGGWWWWWWNWK',
+          'KWWWWWWWWWNWWK',
+          'KWWWPPWWWNWWWK',
+          'KWWWPPWWNWWWWK',
+          'KWWWWWWNWWWWWK',
+          'KKKKKKKKKKKKKK',
+        ],
+      },
+      mines: {
+        palette: { K: '#000', W: '#fff' },
+        rows: [
+          '......K......',
+          '...K..K..K...',
+          '....KKKKK....',
+          '...KKWWKKK...',
+          '.KKKWWKKKKKK.',
+          '...KKKKKKK...',
+          '....KKKKK....',
+          '...K..K..K...',
+          '......K......',
+        ],
+      },
+      guestbook: {
+        palette: { K: '#000', W: '#ffff99', B: '#0000ff' },
+        rows: [
+          '..KKKKKKKKKK..',
+          '.KWWWWWWWWWWK.',
+          'KWWBBWBBBWBWWK',
+          'KWWWWWWWWWWWWK',
+          'KWBBBWBBWBBBWK',
+          'KWWWWWWWWWWWWK',
+          '.KWWWWWWWWWWK.',
+          '..KKKWWKKKKK..',
+          '....KWK.......',
+          '....KK........',
+        ],
+      },
+      music: {
+        palette: { K: '#000', M: '#ff00ff' },
+        rows: [
+          '.....KKKKKK',
+          '.....KMMMMK',
+          '.....KKKKKK',
+          '.....K....K',
+          '.....K....K',
+          '.....K....K',
+          '..KKKK..KKK',
+          '.KMMMK.KMMK',
+          '.KMMMK.KMMK',
+          '..KKK...KK.',
+        ],
+      },
+      error: {
+        palette: { K: '#000', R: '#e00000', W: '#fff' },
+        rows: [
+          '....KKKKK....',
+          '..KKRRRRRKK..',
+          '.KRRRRRRRRRK.',
+          '.KRRWRRRWRRK.',
+          'KRRRRWRWRRRRK',
+          'KRRRRRWRRRRRK',
+          'KRRRRWRWRRRRK',
+          '.KRRWRRRWRRK.',
+          '.KRRRRRRRRRK.',
+          '..KKRRRRRKK..',
+          '....KKKKK....',
+        ],
+      },
+    };
+
+    // turns pixel art into an svg data uri (runs of one color become one rect)
+    function pixelSrc({ palette, rows }) {
+      const width = rows[0].length;
+      let rects = '';
+      rows.forEach((row, y) => {
+        for (let x = 0; x < width;) {
+          let run = 1;
+          while (x + run < width && row[x + run] === row[x]) {
+            run++;
+          }
+          if (row[x] !== '.') {
+            rects += `<rect x="${x}" y="${y}" width="${run}" height="1" fill="${palette[row[x]]}"/>`;
+          }
+          x += run;
+        }
+      });
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${rows.length}" shape-rendering="crispEdges">${rects}</svg>`;
+      return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    }
+    const PIXEL = {};
+    Object.entries(PIXEL_ART).forEach(([name, art]) => {
+      PIXEL[name] = pixelSrc(art);
+      // available to the stylesheet as var(--px-folder) etc.
+      htmlRoot.style.setProperty(`--px-${name}`, `url("${PIXEL[name]}")`);
+    });
+
+    // which little icon a window gets in its title bar and taskbar button
+    function retroIconFor(entry) {
+      if (entry.kind === 'finder') {
+        return entry.current() === TRASH ? (TRASH.children.length ? 'binFull' : 'bin') : 'folder';
+      }
+      const byKind = { messages: 'guestbook', about: 'computer', paint: 'paint', mines: 'mines', dialog: 'error' };
+      return byKind[entry.kind] || (entry.node?.type === 'image' ? 'paint' : 'file');
+    }
+
+    /* ---------- switching eras ---------- */
+    const travelSwitch = document.querySelector('.tt-input');
+    let built = false;
+    let errorTimer = null;
+
+    function initRetro() {
+      travelSwitch.addEventListener('change', () => {
+        travelSwitch.checked ? enterRetro() : exitRetro();
+      });
+    }
+
+    function enterRetro() {
+      buildRetro();
+      travelSwitch.disabled = true;
+      // a fake boot screen; the desktop changes behind it while it's black
+      const screen = el('div', 'boot-screen',
+        '<div class="boot-logo"><span class="boot-croissant"></span>' +
+        '<div class="boot-title">Katie<span>98</span></div><div class="boot-edition">Mash-Up Edition</div></div>' +
+        '<div class="boot-bar"><span></span></div><div class="boot-text">Starting Katie 98…</div>');
+      screen.style.setProperty('--boot-ms', BOOT_MS + 'ms');
+      document.body.append(screen);
+      setTimeout(() => {
+        htmlRoot.classList.add('retro');
+        updateTaskbar();
+        window.dispatchEvent(new Event('retro-change'));
+      }, 260);
+      setTimeout(() => {
+        screen.classList.add('done');
+        setTimeout(() => screen.remove(), 400);
+        travelSwitch.disabled = false;
+        scheduleError(FIRST_ERROR_MS);
+        window.dispatchEvent(new CustomEvent('pet-say', { detail: 'where am i. what year is it.' }));
+      }, BOOT_MS);
+    }
+
+    function exitRetro() {
+      clearTimeout(errorTimer);
+      closeStartMenu();
+      // Paint, Minesweeper and error pop-ups only exist in 1998
+      windows.forEach(entry => {
+        if (RETRO_ONLY_KINDS.includes(entry.kind)) {
+          close(entry);
+        }
+      });
+      htmlRoot.classList.remove('retro');
+      travelSwitch.checked = false;
+      updateMenubar();
+      window.dispatchEvent(new Event('retro-change'));
+      window.dispatchEvent(new CustomEvent('pet-say', { detail: 'finally.' }));
+    }
+
+    // the taskbar, start button, desktop shortcuts and web-1.0 clutter, made once
+    function buildRetro() {
+      if (built) {
+        return;
+      }
+      built = true;
+
+      const taskbar = el('div', 'taskbar retro-only',
+        `<button class="start-button" type="button"><img src="${PIXEL.croissant}" alt="">start</button>` +
+        '<div class="taskbar-windows"></div>' +
+        '<div class="tray"><span aria-hidden="true">🔊</span><span class="tray-clock"></span></div>');
+      taskbar.querySelector('.start-button').addEventListener('click', toggleStartMenu);
+      document.body.append(taskbar);
+      tickClock();
+
+      const marquee = el('div', 'retro-marquee retro-only');
+      const text = '★ Welcome to <b>Katie’s Homepage</b>!!! ★ Best viewed in 800×600 ★ Sign my guestbook!!! ★ ' +
+        'Throw the croissant (it hates that) ★ Now with 256 colors ★ ';
+      marquee.innerHTML = `<div class="retro-marquee-track"><span>${text}</span><span>${text}</span></div>`;
+      document.body.append(marquee);
+
+      // a completely made-up hit counter
+      const visits = readStore('retro-visits', 0) + 1;
+      writeStore('retro-visits', visits);
+      const days = Math.floor((Date.now() - Date.UTC(2026, 0, 1)) / 864e5);
+      const visitor = String(4000 + Math.max(0, days) * 7 + visits).padStart(6, '0');
+      document.body.append(el('div', 'retro-badges retro-only',
+        `<div class="visitor-counter">You are visitor #<br><span class="odometer">${visitor}</span></div>` +
+        '<div class="construction">UNDER CONSTRUCTION</div>' +
+        '<div class="new-badge">NEW!</div>'));
+
+      // desktop shortcuts for the apps that normally live in the dock
+      const shortcuts = el('div', 'retro-shortcuts retro-only');
+      [
+        { icon: 'computer', name: 'My Computer', node: ROOT, open: () => showFolder(ROOT) },
+        { icon: 'bin', name: 'Recycle Bin', node: TRASH, open: () => showFolder(TRASH), bin: true },
+        { icon: 'guestbook', name: 'Guestbook.exe', open: openMessages },
+        { icon: 'paint', name: 'Paint', open: openPaint },
+        { icon: 'mines', name: 'Minesweeper', open: openMines },
+        { icon: 'music', name: 'Croissant Radio', open: () => window.open(CONFIG.musicUrl, '_blank', 'noopener') },
+      ].forEach(app => {
+        const icon = el('a', 'file retro-shortcut', '<span class="thumb"><span class="px-icon"></span></span>');
+        icon.href = '#';
+        icon.draggable = false;
+        icon.querySelector('.px-icon').style.backgroundImage = `var(--px-${app.icon})`;
+        if (app.bin) {
+          icon.classList.add('retro-bin');
+        }
+        // My Computer and the Recycle Bin are drop targets, like real folders
+        icon.node = app.node;
+        icon.append(iconLabel(app.name));
+        icon.addEventListener('click', deactivateWindows);
+        wireIcon(icon, app.open);
+        shortcuts.append(icon);
+      });
+      document.body.append(shortcuts);
+
+      document.addEventListener('pointermove', sparkle);
+    }
+
+    /* ---------- taskbar ---------- */
+    function updateTaskbar() {
+      const list = document.querySelector('.taskbar-windows');
+      const active = activeEntry();
+      windows.forEach(entry => {
+        entry.win.querySelector('.retro-title').textContent = entry.win.getAttribute('aria-label') || '';
+        entry.win.querySelector('.retro-icon').style.backgroundImage = `var(--px-${retroIconFor(entry)})`;
+      });
+      if (!list) {
+        return;
+      }
+      list.replaceChildren(...[...windows].map(entry => {
+        const button = el('button', 'task-button' + (entry === active ? ' active' : ''));
+        button.type = 'button';
+        button.entry = entry;
+        const icon = el('span', 'task-icon');
+        icon.style.backgroundImage = `var(--px-${retroIconFor(entry)})`;
+        const label = el('span', 'task-label');
+        label.textContent = entry.win.getAttribute('aria-label') || '';
+        button.append(icon, label);
+        // like Windows: click to restore, click the front window's button to minimize it
+        button.addEventListener('click', () => {
+          if (entry.mini) {
+            restore(entry);
+          } else if (entry === activeEntry()) {
+            minimize(entry);
+          } else {
+            focus(entry.win);
+          }
+        });
+        return button;
+      }));
+    }
+
+    function retroTaskButton(entry) {
+      if (!isRetro()) {
+        return null;
+      }
+      return [...document.querySelectorAll('.task-button')].find(button => button.entry === entry) || null;
+    }
+
+    /* ---------- start menu ---------- */
+    let startMenu = null;
+
+    function toggleStartMenu() {
+      startMenu ? closeStartMenu() : openStartMenu();
+    }
+
+    function openStartMenu() {
+      const items = [
+        { icon: 'computer', label: 'My Computer', action: () => showFolder(ROOT) },
+        { icon: 'guestbook', label: 'Guestbook', action: openMessages },
+        { icon: 'paint', label: 'Paint', action: openPaint },
+        { icon: 'mines', label: 'Minesweeper', action: openMines },
+        { icon: 'music', label: 'Croissant Radio', action: () => window.open(CONFIG.musicUrl, '_blank', 'noopener') },
+        { icon: 'bin', label: 'Recycle Bin', action: () => showFolder(TRASH) },
+        '-',
+        { icon: 'croissant', label: 'Ask the Croissant…', action: () => document.querySelector('.pet-prompt input')?.focus() },
+        { icon: 'computer', label: 'About Katie 98', action: openAbout },
+        '-',
+        { icon: 'error', label: 'Shut Down…', action: shutDown },
+      ];
+      startMenu = el('div', 'start-menu retro-only',
+        '<div class="start-stripe"><span>Katie<b>98</b></span></div><div class="start-items"></div>');
+      const list = startMenu.querySelector('.start-items');
+      items.forEach(item => {
+        if (item === '-') {
+          list.append(el('div', 'start-sep'));
+          return;
+        }
+        const row = el('button', 'start-item', '<span class="px"></span><span></span>');
+        row.type = 'button';
+        row.querySelector('.px').style.backgroundImage = `var(--px-${item.icon})`;
+        row.lastChild.textContent = item.label;
+        row.addEventListener('click', () => {
+          closeStartMenu();
+          item.action();
+        });
+        list.append(row);
+      });
+      document.body.append(startMenu);
+      document.querySelector('.start-button').classList.add('open');
+    }
+
+    function closeStartMenu() {
+      startMenu?.remove();
+      startMenu = null;
+      document.querySelector('.start-button')?.classList.remove('open');
+    }
+
+    document.addEventListener('pointerdown', e => {
+      if (startMenu && !e.target.closest('.start-menu, .start-button')) {
+        closeStartMenu();
+      }
+    }, true);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeStartMenu();
+      }
+    });
+
+    // "It's now safe to turn off your computer." click to come back to 2026
+    function shutDown() {
+      const screen = el('div', 'shutdown-screen',
+        '<p>It’s now safe to turn off<br>your computer.</p><small>(click anywhere to time travel back)</small>');
+      document.body.append(screen);
+      screen.addEventListener('click', () => {
+        screen.remove();
+        exitRetro();
+      });
+    }
+
+    /* ---------- web 1.0 clutter ---------- */
+    const SPARKLES = ['✦', '★', '✧', '✶', '·'];
+    const SPARKLE_COLORS = ['#ff3bf5', '#ffe600', '#39ff14', '#00e5ff', '#ff8a00', '#ffffff'];
+    let lastSparkle = 0;
+
+    function sparkle(e) {
+      const now = performance.now();
+      if (!isRetro() || retroReducedMotion || e.pointerType !== 'mouse' || now - lastSparkle < 35) {
+        return;
+      }
+      lastSparkle = now;
+      const star = el('span', 'sparkle');
+      star.textContent = SPARKLES[Math.floor(Math.random() * SPARKLES.length)];
+      star.style.left = e.clientX + 'px';
+      star.style.top = e.clientY + 'px';
+      star.style.color = SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)];
+      document.body.append(star);
+      setTimeout(() => star.remove(), 900);
+    }
+
+    /* ---------- fake error pop-ups ---------- */
+    const ERRORS = [
+      ['Error', 'Task failed successfully.'],
+      ['Croissant.exe', 'Your croissant has performed an illegal operation and will be shut down.\n\n(It will not.)'],
+      ['Error', 'Not enough memory to display this error.'],
+      ['Keyboard Error', 'Keyboard not found.\nPress F1 to continue.'],
+      ['Missing File', 'C:\\KATIE\\VIBES.DLL is missing.\nPlease insert the Vibes disk and try again.'],
+      ['Katie 98', 'Katie 98 has detected that you are cool.\nNo action is required.'],
+      ['Error 404', 'Error not found.'],
+      ['Are You There?', 'Click OK to prove you are not a croissant.'],
+      ['Update', 'Installing update 3 of 2,817…\nDo not turn off your computer. Or do. It’s 1998.'],
+    ];
+
+    function scheduleError(ms) {
+      clearTimeout(errorTimer);
+      errorTimer = setTimeout(() => {
+        if (!isRetro()) {
+          return;
+        }
+        const [title, text] = ERRORS[Math.floor(Math.random() * ERRORS.length)];
+        showError(title, text);
+        const [min, max] = ERROR_EVERY_MS;
+        scheduleError(min + Math.random() * (max - min));
+      }, ms);
+    }
+
+    function showError(title, text) {
+      const entry = { kind: 'dialog', tile: () => ({ node: { name: title } }) };
+      const win = makeWindow('window-dialog', 340, 170,
+        `<div class="titlebar drag-region">${LIGHTS}<div class="title"></div></div>` +
+        '<div class="content dialog"><span class="dialog-icon"></span><p class="dialog-text"></p>' +
+        '<div class="dialog-buttons"><button class="retro-button dialog-ok" type="button">OK</button></div></div>', entry);
+      win.setAttribute('aria-label', title);
+      win.querySelector('.title').textContent = title;
+      win.querySelector('.dialog-text').textContent = text;
+      win.querySelector('.dialog-ok').addEventListener('click', () => close(entry));
+      // pop up somewhere random, like they always did
+      win.style.left = 40 + Math.random() * Math.max(0, window.innerWidth - 420) + 'px';
+      win.style.top = 60 + Math.random() * Math.max(0, window.innerHeight - 320) + 'px';
+      win.querySelector('.dialog-ok').focus();
+      updateTaskbar();
+    }
+
+    /* ---------- paint ---------- */
+    const PAINT_COLORS = ['#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
+      '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'];
+    const PAINT_SIZES = [['Fine', 2], ['Brush', 6], ['Fat', 14]];
+
+    function openPaint() {
+      const existing = [...windows].find(w => w.kind === 'paint');
+      if (existing) {
+        bringBack(existing);
+        return;
+      }
+      const entry = { kind: 'paint', tile: () => ({ node: { name: 'Paint' } }) };
+      const win = makeWindow('window-paint', 540, 420,
+        `<div class="titlebar drag-region">${LIGHTS}<div class="title">untitled - Paint</div></div>` +
+        '<div class="content paint"><div class="paint-tools"></div>' +
+        '<div class="paint-canvas-wrap"><canvas class="paint-canvas" width="440" height="300"></canvas></div>' +
+        '<div class="paint-palette"><span class="paint-current"></span><div class="paint-swatches"></div></div></div>', entry);
+      win.setAttribute('aria-label', 'untitled - Paint');
+
+      const canvas = win.querySelector('.paint-canvas');
+      const ctx = canvas.getContext('2d');
+      const blank = () => {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      };
+      blank();
+      let color = '#000000';
+      let size = 6;
+      let erasing = false;
+
+      const tools = win.querySelector('.paint-tools');
+      const toolButton = (label, onPick) => {
+        const button = el('button', 'paint-tool');
+        button.type = 'button';
+        button.textContent = label;
+        button.addEventListener('click', () => {
+          onPick();
+          if (label !== 'New') {
+            tools.querySelectorAll('.paint-tool').forEach(b => b.classList.toggle('active', b === button));
+          }
+        });
+        tools.append(button);
+        return button;
+      };
+      PAINT_SIZES.forEach(([label, px]) => toolButton(label, () => { size = px; erasing = false; }));
+      toolButton('Eraser', () => { size = 16; erasing = true; });
+      toolButton('New', blank);
+      tools.children[1].classList.add('active');
+
+      const current = win.querySelector('.paint-current');
+      current.style.background = color;
+      const swatches = win.querySelector('.paint-swatches');
+      PAINT_COLORS.forEach(c => {
+        const swatch = el('button', 'paint-swatch');
+        swatch.type = 'button';
+        swatch.style.background = c;
+        swatch.setAttribute('aria-label', c);
+        swatch.addEventListener('click', () => {
+          color = c;
+          current.style.background = c;
+        });
+        swatches.append(swatch);
+      });
+
+      // draw with the mouse (or a finger)
+      let last = null;
+      const point = e => {
+        const rect = canvas.getBoundingClientRect();
+        return [(e.clientX - rect.left) * canvas.width / rect.width, (e.clientY - rect.top) * canvas.height / rect.height];
+      };
+      canvas.addEventListener('pointerdown', e => {
+        canvas.setPointerCapture(e.pointerId);
+        last = point(e);
+        ctx.fillStyle = erasing ? '#fff' : color;
+        ctx.beginPath();
+        ctx.arc(last[0], last[1], size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      canvas.addEventListener('pointermove', e => {
+        if (!last) {
+          return;
+        }
+        const next = point(e);
+        ctx.strokeStyle = erasing ? '#fff' : color;
+        ctx.lineWidth = size;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(...last);
+        ctx.lineTo(...next);
+        ctx.stroke();
+        last = next;
+      });
+      const stop = () => { last = null; };
+      canvas.addEventListener('pointerup', stop);
+      canvas.addEventListener('pointercancel', stop);
+    }
+
+    /* ---------- minesweeper ---------- */
+    const MINE_SIZE = 9;
+    const MINE_COUNT = 10;
+    const MINE_COLORS = ['', '#0000ff', '#008000', '#ff0000', '#000080', '#800000', '#008080', '#000000', '#808080'];
+
+    function openMines() {
+      const existing = [...windows].find(w => w.kind === 'mines');
+      if (existing) {
+        bringBack(existing);
+        return;
+      }
+      const entry = { kind: 'mines', tile: () => ({ node: { name: 'Minesweeper' } }) };
+      const win = makeWindow('window-mines', 244, 324,
+        `<div class="titlebar drag-region">${LIGHTS}<div class="title">Minesweeper</div></div>` +
+        '<div class="content mines"><div class="mines-head"><span class="mines-lcd mines-left"></span>' +
+        '<button class="mines-face" type="button" aria-label="New game">🙂</button>' +
+        '<span class="mines-lcd mines-time"></span></div><div class="mines-grid"></div></div>', entry);
+      win.setAttribute('aria-label', 'Minesweeper');
+
+      const grid = win.querySelector('.mines-grid');
+      const face = win.querySelector('.mines-face');
+      const left = win.querySelector('.mines-left');
+      const time = win.querySelector('.mines-time');
+      let cells;
+      let started;
+      let over;
+      let seconds;
+      let timer = null;
+      const lcd = n => String(Math.max(-99, Math.min(999, n))).padStart(3, '0');
+      const neighbors = i => {
+        const x = i % MINE_SIZE;
+        const y = Math.floor(i / MINE_SIZE);
+        const out = [];
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if ((dx || dy) && nx >= 0 && ny >= 0 && nx < MINE_SIZE && ny < MINE_SIZE) {
+              out.push(ny * MINE_SIZE + nx);
+            }
+          }
+        }
+        return out;
+      };
+
+      function reset() {
+        clearInterval(timer);
+        cells = Array.from({ length: MINE_SIZE * MINE_SIZE }, () => ({ mine: false, open: false, flag: false, n: 0 }));
+        started = false;
+        over = false;
+        seconds = 0;
+        face.textContent = '🙂';
+        draw();
+      }
+
+      // mines are placed after the first click, so it's never a loss
+      function plant(safe) {
+        let placed = 0;
+        while (placed < MINE_COUNT) {
+          const i = Math.floor(Math.random() * cells.length);
+          if (i !== safe && !cells[i].mine) {
+            cells[i].mine = true;
+            placed++;
+          }
+        }
+        cells.forEach((cell, i) => {
+          cell.n = neighbors(i).filter(j => cells[j].mine).length;
+        });
+        started = true;
+        timer = setInterval(() => {
+          seconds++;
+          time.textContent = lcd(seconds);
+        }, 1000);
+      }
+
+      function reveal(i) {
+        const cell = cells[i];
+        if (cell.open || cell.flag) {
+          return;
+        }
+        cell.open = true;
+        if (cell.mine) {
+          over = true;
+          cell.boom = true;
+          cells.forEach(c => { if (c.mine) c.open = true; });
+          face.textContent = '😵';
+          clearInterval(timer);
+          return;
+        }
+        if (cell.n === 0) {
+          neighbors(i).forEach(reveal);
+        }
+      }
+
+      function draw() {
+        grid.replaceChildren(...cells.map((cell, i) => {
+          const square = el('span', 'mine-cell' + (cell.open ? ' open' : '') + (cell.boom ? ' boom' : ''));
+          square.dataset.i = i;
+          if (cell.open) {
+            square.textContent = cell.mine ? '💣' : cell.n || '';
+            square.style.color = MINE_COLORS[cell.n];
+          } else if (cell.flag) {
+            square.textContent = '🚩';
+          }
+          return square;
+        }));
+        left.textContent = lcd(MINE_COUNT - cells.filter(c => c.flag).length);
+        time.textContent = lcd(seconds);
+      }
+
+      grid.addEventListener('click', e => {
+        const square = e.target.closest('.mine-cell');
+        if (!square || over) {
+          return;
+        }
+        const i = +square.dataset.i;
+        if (!started) {
+          plant(i);
+        }
+        reveal(i);
+        if (!over && cells.filter(c => !c.open).length === MINE_COUNT) {
+          over = true;
+          face.textContent = '😎';
+          clearInterval(timer);
+        }
+        draw();
+      });
+      grid.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        const square = e.target.closest('.mine-cell');
+        if (!square || over) {
+          return;
+        }
+        const cell = cells[+square.dataset.i];
+        if (!cell.open) {
+          cell.flag = !cell.flag;
+          draw();
+        }
+      });
+      grid.addEventListener('pointerdown', e => {
+        if (!over && e.button === 0) {
+          face.textContent = '😮';
+        }
+      });
+      grid.addEventListener('pointerup', () => {
+        if (!over) {
+          face.textContent = '🙂';
+        }
+      });
+      face.addEventListener('click', reset);
+      entry.onClose = () => clearInterval(timer);
+      reset();
     }
 
     /* ================= desktop + dock ================= */
@@ -3685,6 +5698,7 @@
 
     updateWeather();
     setInterval(updateWeather, WEATHER_REFRESH_MS);
+    initRetro();
     tickClock();
     setInterval(tickClock, 10000);
     updateMenubar();
