@@ -26,6 +26,17 @@
       background: #f6d6dc url("../.system/wallpaper.jpg") center / cover fixed no-repeat;
       -webkit-font-smoothing: antialiased;
     }
+    /* film grain over the wallpaper, behind everything on the desktop */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 180px 180px repeat;
+      opacity: .28;
+      mix-blend-mode: overlay;
+    }
     main {
       box-sizing: border-box;
       min-height: 100vh;
@@ -584,11 +595,11 @@
       z-index: 100000;
       display: flex;
       align-items: flex-end;
-      gap: 4px;
-      height: 48px;
-      padding: 0 6px 4px;
+      gap: 6px;
+      height: 66px;
+      padding: 0 10px 9px;
       box-sizing: border-box;
-      border-radius: 17px;
+      border-radius: 24px;
       background: rgba(255, 255, 255, .28);
       border: 1px solid rgba(255, 255, 255, .45);
       box-shadow: 0 0 0 .5px rgba(0, 0, 0, .15), 0 10px 30px rgba(0, 0, 0, .15);
@@ -596,7 +607,7 @@
       backdrop-filter: blur(24px) saturate(1.8);
     }
     .dock-item {
-      --size: 40px;
+      --size: 48px;
       position: relative;
       flex: none;
       width: var(--size);
@@ -662,7 +673,7 @@
       flex: none;
       align-self: stretch;
       width: 1px;
-      margin: 7px 3px 4px;
+      margin: 12px 4px 10px;
       background: rgba(0, 0, 0, .18);
     }
     /* minimized windows sit between the divider and the trash */
@@ -1322,15 +1333,6 @@
       width: 18px;
       height: 13px;
     }
-    .menu-status {
-      display: flex;
-      align-items: center;
-      padding: 0 6px;
-    }
-    .menu-status svg {
-      height: 13px;
-      width: auto;
-    }
     .menu-clock {
       padding: 0 8px 0 6px;
       font-weight: 500;
@@ -1536,8 +1538,6 @@
       <button class="menu-title" type="button" data-menu="help">Help</button>
     </nav>
     <div class="menu-right">
-      <span class="menu-status" aria-hidden="true"><svg viewBox="0 0 20 14"><path d="M10 12.6 7.6 10a3.4 3.4 0 0 1 4.8 0zM4.9 7.3a7.3 7.3 0 0 1 10.2 0l-1.4 1.4a5.3 5.3 0 0 0-7.4 0zM2.1 4.5a11.3 11.3 0 0 1 15.8 0l-1.4 1.4a9.3 9.3 0 0 0-13 0z" fill="currentColor"/></svg></span>
-      <span class="menu-status" aria-hidden="true"><svg viewBox="0 0 26 14"><rect x=".75" y="1.75" width="21" height="10.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"/><rect x="2.4" y="3.4" width="15" height="7.2" rx="1.6" fill="currentColor"/><path d="M23.6 5.3v3.4c.8-.3 1.3-1 1.3-1.7s-.5-1.4-1.3-1.7z" fill="currentColor" opacity=".55"/></svg></span>
       <span class="menu-clock" aria-label="Time"></span>
     </div>
   </header>
@@ -1603,6 +1603,11 @@
     const FOLLOW = 18;          // how tightly it follows the cursor while dragged
     const REST_LIFT = .08;      // hover height above its shadow
     const DRAG_LIFT = .3;       // picked up: higher, so the shadow drifts further away
+    const GRAVITY = 2600;       // px/s², for falling in on page load
+    const HOME_RIGHT = 110;     // home spot: this far in from the left edge...
+    const HOME_UP = 70;         // ...and this far up from the bottom
+    const GREETING = 'Don’t you dare throw me.';
+    const GREETING_MS = 7000;   // the greeting fades away by itself after this
 
     // its whole personality. add or edit lines freely
     const REPLIES = [
@@ -1704,8 +1709,9 @@
     const state = {
       x: 0, y: 0, vx: 0, vy: 0,
       dragging: false, grabX: 0, grabY: 0, pointerX: 0, pointerY: 0,
+      falling: false,
       tiltX: springAt(0), tiltZ: springAt(0), yaw: springAt(0),
-      squash: springAt(1), lift: springAt(REST_LIFT), appear: springAt(reducedMotion ? 1 : 0),
+      squash: springAt(1), lift: springAt(REST_LIFT), appear: springAt(1),
     };
 
     // the prompt is wider than the canvas; keep all of it on screen
@@ -1757,12 +1763,30 @@
         const tx = state.pointerX - state.grabX;
         const ty = state.pointerY - state.grabY;
         const follow = 1 - Math.exp(-FOLLOW * dt);
-        const nx = state.x + (tx - state.x) * follow;
-        const ny = state.y + (ty - state.y) * follow;
+        // stays on screen even while held, so it can't be dragged off and lost
+        const nx = Math.min(Math.max(state.x + (tx - state.x) * follow, b.minX), b.maxX);
+        const ny = Math.min(Math.max(state.y + (ty - state.y) * follow, b.minY), b.maxY);
         state.vx = (nx - state.x) / dt;
         state.vy = (ny - state.y) / dt;
         state.x = nx;
         state.y = ny;
+      } else if (state.falling) {
+        // dropping in on page load: gravity, then a couple of small bounces
+        state.vy += GRAVITY * dt;
+        state.y += state.vy * dt;
+        const floorY = homeY();
+        if (state.y >= floorY) {
+          state.y = floorY;
+          state.squash.v -= Math.min(state.vy / 220, 7); // splat on landing
+          state.tiltZ.v += (Math.random() - .5) * 4;
+          if (state.vy > 260) {
+            state.vy *= -.32;
+          } else {
+            state.vy = 0;
+            state.falling = false;
+            landed();
+          }
+        }
       } else {
         // thrown: keep going, slow down, bounce off the screen edges
         state.x += state.vx * dt;
@@ -1800,7 +1824,7 @@
       positionBubble();
 
       // stop drawing once everything has settled
-      const settled = !state.dragging && Math.hypot(state.vx, state.vy) < 4 &&
+      const settled = !state.dragging && !state.falling && Math.hypot(state.vx, state.vy) < 4 &&
         [state.tiltX, state.tiltZ, state.yaw, state.squash, state.lift, state.appear]
           .every(sp => Math.abs(sp.v) < .01 && Math.abs(sp.x - (sp === state.squash || sp === state.appear ? 1 : sp === state.lift ? REST_LIFT : 0)) < .005);
       frame = settled ? null : requestAnimationFrame(tick);
@@ -1842,6 +1866,7 @@
         pointerY: e.clientY,
       });
       moved = true;
+      state.falling = false; // caught mid-air
       state.squash.v += 3; // a little squeeze when picked up
       canvas.style.cursor = 'grabbing';
       wake();
@@ -1870,14 +1895,19 @@
       }
       state.dragging = false;
       canvas.style.cursor = 'grab';
-      // throw at the speed the cursor was moving just before letting go
-      sample(e);
-      const first = samples[0];
-      const lastSample = samples.at(-1);
-      const elapsed = (lastSample.t - first.t) / 1000;
-      if (elapsed > .01) {
-        state.vx = (lastSample.x - first.x) / elapsed;
-        state.vy = (lastSample.y - first.y) / elapsed;
+      // throw at the speed the cursor was moving just before letting go.
+      // (lost capture or switching apps just drops it, with no throw)
+      if (e.type === 'pointerup') {
+        sample(e);
+        const first = samples[0];
+        const lastSample = samples.at(-1);
+        const elapsed = (lastSample.t - first.t) / 1000;
+        if (elapsed > .01) {
+          state.vx = (lastSample.x - first.x) / elapsed;
+          state.vy = (lastSample.y - first.y) / elapsed;
+        }
+      } else {
+        state.vx = state.vy = 0;
       }
       // throws are capped so it can't vanish across the screen in one frame
       const speed = Math.hypot(state.vx, state.vy);
@@ -1890,12 +1920,38 @@
     };
     canvas.addEventListener('pointerup', letGo);
     canvas.addEventListener('pointercancel', letGo);
+    // a mouse released outside the browser, or switching apps mid-drag, can
+    // skip pointerup; without these it would stay "held" forever
+    canvas.addEventListener('lostpointercapture', letGo);
+    window.addEventListener('blur', letGo);
 
-    // its home spot, until someone moves it
+    // macOS can reset the graphics context (e.g. switching GPUs); three.js
+    // rebuilds it, but the croissant has to be drawn again
+    canvas.addEventListener('webglcontextrestored', wake);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        wake();
+      }
+    });
+
+    // its home spot (until someone moves it): a little in from the bottom-left corner
     let moved = false;
+    const homeX = () => bounds().minX + HOME_RIGHT;
+    const homeY = () => window.innerHeight - root.offsetHeight - HOME_UP;
     function goHome() {
-      state.x = bounds().minX + EDGE_MARGIN - 4;
-      state.y = window.innerHeight - root.offsetHeight - EDGE_MARGIN;
+      state.x = homeX();
+      state.y = homeY();
+    }
+
+    // after falling in: a warning that doubles as a hint
+    function landed() {
+      say(GREETING);
+      setTimeout(() => {
+        if (bubbleText.textContent.trim() === GREETING) {
+          bubble.hidden = true;
+          closeButton.hidden = true;
+        }
+      }, GREETING_MS);
     }
 
     // a little wiggle when the cursor comes near, as a hint that it can be picked up
@@ -2025,12 +2081,16 @@
       halfHeight = (size.y * scale) / 2;
       pivot.add(model);
 
-      // land in the bottom-left corner with a little jiggle
+      // fall from above the screen into its home spot
       root.hidden = false;
       goHome();
-      if (!reducedMotion) {
-        state.tiltZ.v = 5;
-        state.squash.v = -4;
+      if (reducedMotion) {
+        landed();
+      } else {
+        state.y = -root.offsetHeight;
+        state.vy = 0;
+        state.falling = true;
+        state.tiltZ.v = 2.5; // tumble a little on the way down
       }
       wake();
     }, undefined, err => console.error('pet failed to load', err));
@@ -2040,9 +2100,9 @@
   <script>
   (() => {
     /* ================= core: data, helpers, selection, windows ================= */
-    const DOCK_BASE = 40;   // dock icon size at rest
-    const DOCK_MAX = 70;    // size of the icon directly under the cursor
-    const DOCK_SPREAD = 60; // how far the magnification reaches, in px
+    const DOCK_BASE = 48;   // dock icon size at rest
+    const DOCK_MAX = 84;    // size of the icon directly under the cursor
+    const DOCK_SPREAD = 70; // how far the magnification reaches, in px
     const TITLEBAR = 28;
     const MENUBAR_HEIGHT = 28; // windows stay below the menu bar
 
