@@ -699,17 +699,41 @@
     .dock-mini .dock-icon svg {
       border-radius: 22.5%;
     }
-    .dock-trash .dock-icon {
+    /* the dock's object icons (magnifier, envelope, cd, bin): no app tile
+       behind them, just the object and a soft shadow */
+    .dock-object, .dock-mini .dock-object {
       border-radius: 0;
+      background: none;
       box-shadow: none;
       overflow: visible;
-      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .25));
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .22));
     }
-    .dock-trash .dock-icon::after {
+    .dock-object::after {
       content: none;
     }
+    .dock-object img, .dock-mini .dock-object img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .trash-paper {
+      position: absolute;
+      left: 18%;
+      top: -12%;
+      width: 64% !important;
+      height: auto !important;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .2s, transform .2s;
+    }
+    .dock-trash.full .trash-paper {
+      opacity: 1;
+      transform: none;
+    }
     .dock-trash.drop-target .dock-icon {
-      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .25)) brightness(.8);
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .22)) brightness(.85);
     }
 
     /* ---------- drag and drop ---------- */
@@ -1567,21 +1591,26 @@
   </div>
 
   <nav class="dock" aria-label="Dock">
+    
     <button class="dock-item dock-finder running" type="button" aria-label="Finder">
-      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-finder-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#3fa4f5"/></linearGradient><linearGradient id="dock-finder-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f8cf0"/><stop offset="1" stop-color="#1557d6"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-finder-b)"/><path d="M0 0h27c-3.4 7.5-5.4 15.3-5.6 24.6H27c-.6 8.3.4 15.9 2.8 23.4H0z" fill="url(#dock-finder-a)"/><rect x="12.5" y="14" width="3.2" height="8" rx="1.6" fill="#13253d"/><rect x="32.5" y="14" width="3.2" height="8" rx="1.6" fill="#13253d"/><path d="M11 32.5c7.5 6 18.5 6 26 0" fill="none" stroke="#13253d" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+      <span class="dock-icon dock-object"><img src="../.system/dock-finder.png" alt="" draggable="false"></span>
       <span class="dock-tip">Finder</span>
     </button>
     <button class="dock-item dock-messages" type="button" aria-label="Messages">
-      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-msg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6df06c"/><stop offset="1" stop-color="#1fbf3b"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-msg)"/><path d="M24 11c-8.8 0-15.5 5.6-15.5 12.6 0 4 2.2 7.5 5.7 9.8-.3 2.2-1.4 4.2-3.1 5.6 3.1.1 6.1-1 8.3-2.9 1.5.4 3 .6 4.6.6 8.8 0 15.5-5.6 15.5-12.6S32.8 11 24 11z" fill="white"/></svg></span>
+      <span class="dock-icon dock-object"><img src="../.system/dock-messages.png" alt="" draggable="false"></span>
       <span class="dock-tip">Messages</span>
     </button>
     <button class="dock-item dock-music" type="button" aria-label="Music">
-      <span class="dock-icon"><svg viewBox="0 0 48 48"><defs><linearGradient id="dock-music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a8f"/><stop offset="1" stop-color="#f6224a"/></linearGradient></defs><rect width="48" height="48" fill="url(#dock-music)"/><path d="M19 15.5 33 12.5v17.2a4.6 4.6 0 1 1-2.6-4.1V17.8L21.6 19.7v12.6a4.6 4.6 0 1 1-2.6-4.1z" fill="white"/></svg></span>
+      <span class="dock-icon dock-object"><img src="../.system/dock-music.png" alt="" draggable="false"></span>
       <span class="dock-tip">Music</span>
     </button>
     <span class="dock-divider"></span>
     <button class="dock-item dock-trash" type="button" aria-label="Trash">
-      <span class="dock-icon"></span>
+      <span class="dock-icon dock-object">
+        <img src="../.system/dock-trash.png" alt="" draggable="false">
+        
+        <svg class="trash-paper" viewBox="0 0 48 20" aria-hidden="true"><path d="M7 18c0-6 4-10 9-9 1.5-5 9-6.5 12-1.5 3-3.5 9.5-2 10.5 3 4-.5 6 3 4.5 7.5z" fill="#f3efe6" stroke="#8e969f" stroke-width="1"/><path d="M16 9.5l2.5 4M28.5 7.5l-2 5M36 11l-3.5 3" stroke="#a7aeb6" stroke-width=".9" fill="none"/></svg>
+      </span>
       <span class="dock-tip">Trash</span>
     </button>
   </nav>
@@ -2258,12 +2287,6 @@
       trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M2.5 4h11M6 4V2.5h4V4M3.8 4l.7 9.2c.1.7.6 1.3 1.3 1.3h4.4c.7 0 1.2-.6 1.3-1.3l.7-9.2"/></svg>',
       send: '<svg viewBox="0 0 16 16"><path d="M8 13V3.5M3.8 7.5 8 3.3l4.2 4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     };
-    const trashCan = full =>
-      '<svg viewBox="0 0 48 48"><defs><linearGradient id="dock-trash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfcfd"/><stop offset="1" stop-color="#c7ced6"/></linearGradient></defs>' +
-      (full ? '<path d="M12.5 11.5c1-4.5 5.5-6 8-3.5 1.6-3.6 7.6-3.4 9 .4 2.8-1.4 6 .6 5.6 3.1z" fill="#fff" stroke="#b8bfc8" stroke-width=".8"/><path d="M18 8.5l3 3M27 7.5l-1.5 4" stroke="#c9cfd6" stroke-width=".8"/>' : '') +
-      '<path d="M9.5 12.5h29l-2.7 29.3a3 3 0 0 1-3 2.7H15.2a3 3 0 0 1-3-2.7z" fill="url(#dock-trash)" stroke="#9ba4ae" stroke-width=".8"/>' +
-      '<ellipse cx="24" cy="12.5" rx="14.5" ry="2.6" fill="#e6eaef" stroke="#9ba4ae" stroke-width=".8"/>' +
-      '<path d="M16.6 17.5l1 23M24 17.5v23M31.4 17.5l-1 23" stroke="#b3bbc4" stroke-width=".9"/></svg>';
 
     /* ---------- icons ---------- */
     // the big icon used on the desktop and in finder icon view
@@ -2487,6 +2510,7 @@
       const { node, appIcon } = entry.tile();
       if (appIcon) {
         icon.innerHTML = appIcon;
+        icon.classList.add('dock-object');
       } else if (node.type === 'image') {
         const img = el('img');
         img.src = node.thumb || node.href;
@@ -2827,7 +2851,7 @@
           renderFinder(entry);
         }
       });
-      trash.querySelector('.dock-icon').innerHTML = trashCan(TRASH.children.length > 0);
+      trash.classList.toggle('full', TRASH.children.length > 0);
     }
 
     /* ================= drag and drop ================= */
@@ -3636,7 +3660,6 @@
     });
 
     trash.addEventListener('click', () => showFolder(TRASH));
-    trash.querySelector('.dock-icon').innerHTML = trashCan(false);
 
     /* ---------- dock magnification ---------- */
     let mouseX = null;
