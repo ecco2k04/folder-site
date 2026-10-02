@@ -1214,7 +1214,7 @@
     }
     .pet-bubble {
       position: absolute;
-      bottom: calc(100% - 64px);
+      bottom: calc(100% - 40px);
       width: max-content;
       max-width: min(340px, calc(100vw - 16px));
       padding: 14px 20px 16px;
@@ -1260,7 +1260,7 @@
     }
     .pet-close {
       position: absolute;
-      top: 66px;
+      top: 42px;
       left: 24px;
       width: 26px;
       height: 26px;
@@ -1518,9 +1518,11 @@
     body {
       overflow-x: auto;
     }
+    /* your finder arrangement, anchored to the left edge (plus main's padding) */
     .plantbed {
       width: 0;
       position: relative;
+      left: 24px;
     }
     .item {
       position: absolute;
@@ -1531,7 +1533,7 @@
 <body>
   <main>
 
-    <div class="plantbed" style="left: max(0px, calc(50% - 106.5px - 48px))">
+    <div class="plantbed">
       <div class="item" style="top: 154px; left: 213px">
 <a class="file" href="blog%20posts/" draggable="false" data-index="0">
   <span class="thumb">
