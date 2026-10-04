@@ -1242,7 +1242,7 @@
       -webkit-user-select: text;
       animation: pet-pop .22s cubic-bezier(.2, .9, .3, 1.3);
     }
-    .pet-bubble[hidden], .pet-close[hidden] {
+    .pet-bubble[hidden] {
       display: none;
     }
     .pet.bubble-below .pet-bubble {
@@ -1277,27 +1277,10 @@
     @keyframes pet-think {
       50% { opacity: .35; }
     }
-    .pet-close {
-      position: absolute;
-      top: 42px;
-      left: 24px;
-      width: 26px;
-      height: 26px;
-      padding: 0;
-      border: .5px solid rgba(0, 0, 0, .08);
-      border-radius: 50%;
-      background: rgba(248, 248, 250, .85);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
-      font: inherit;
-      font-size: 16px;
-      line-height: 1;
-      color: #3c3c43;
-      cursor: default;
-      pointer-events: auto;
-    }
     .pet-prompt {
+      /* it overlaps the bottom of the croissant's grab area; stay on top so it can be clicked */
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1617,16 +1600,10 @@
       font-family: var(--retro-font);
       background: #3a6ea5;
     }
-    /* a made-up sunny-hills wallpaper, drawn with gradients */
+    /* Katie's rolling-hills wallpaper (with a visitor in the sky) */
     .retro body::before {
       filter: none;
-      background:
-        radial-gradient(ellipse 30% 9% at 24% 26%, rgba(255, 255, 255, .9), transparent 70%),
-        radial-gradient(ellipse 22% 7% at 33% 22%, rgba(255, 255, 255, .8), transparent 70%),
-        radial-gradient(ellipse 26% 8% at 72% 16%, rgba(255, 255, 255, .85), transparent 70%),
-        radial-gradient(ellipse 85% 42% at 25% 104%, #6cd146 0 56%, #4ea232 63%, transparent 64%),
-        radial-gradient(ellipse 100% 48% at 92% 112%, #48a832 0 57%, #3a8a28 60%, transparent 61%),
-        linear-gradient(#1f5fd6, #4f92f0 45%, #a9d3ff 72%, #dff0ff);
+      background: #3a6ea5 url("../.system/retro-wallpaper.jpg") center / cover no-repeat;
     }
     .retro .menubar, .retro .dock {
       display: none;
@@ -2675,18 +2652,6 @@
     .retro .pet-text {
       font: 13px var(--retro-font);
     }
-    .retro .pet-close {
-      width: 18px;
-      height: 18px;
-      border: 0;
-      border-radius: 0;
-      background: #c0c0c0;
-      box-shadow: var(--bevel-out);
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
-      color: #000;
-      font: bold 12px/1 var(--retro-font);
-    }
     .retro .pet-prompt {
       height: 28px;
       border: 0;
@@ -2794,7 +2759,6 @@
       <div class="pet-from">CROISSANT</div>
       <div class="pet-text"></div>
     </div>
-    <button class="pet-close" type="button" aria-label="Dismiss" hidden>×</button>
     <div class="pet-stage">
       <canvas class="pet-canvas" aria-label="A croissant. Drag it around."></canvas>
       
@@ -2832,7 +2796,7 @@
     const HOME_RIGHT = 110;     // home spot: this far in from the left edge...
     const HOME_UP = 70;         // ...and this far up from the bottom
     const GREETING = 'Don’t you dare throw me.';
-    const GREETING_MS = 7000;   // the greeting fades away by itself after this
+    const BUBBLE_MS = 8000;     // answers fade away by themselves after this
 
     // its whole personality. add or edit lines freely
     const REPLIES = [
@@ -2888,7 +2852,6 @@
     const retro = () => document.documentElement.classList.contains('retro');
     const bubble = root.querySelector('.pet-bubble');
     const bubbleText = root.querySelector('.pet-text');
-    const closeButton = root.querySelector('.pet-close');
     const form = root.querySelector('.pet-prompt');
     const input = form.querySelector('input');
 
@@ -3188,12 +3151,6 @@
     // after falling in: a warning that doubles as a hint
     function landed() {
       say(GREETING);
-      setTimeout(() => {
-        if (bubbleText.textContent.trim() === GREETING) {
-          bubble.hidden = true;
-          closeButton.hidden = true;
-        }
-      }, GREETING_MS);
     }
 
     // a little wiggle when the cursor comes near, as a hint that it can be picked up
@@ -3254,10 +3211,13 @@
     }
 
     let replyTimer = null;
+    let hideTimer = null;
     function say(text) {
       bubble.hidden = false;
-      closeButton.hidden = false;
       bubble.classList.remove('thinking');
+      // there's no close button: each answer disappears on its own
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => { bubble.hidden = true; }, BUBBLE_MS);
       bubbleText.replaceChildren();
       // words fade in one at a time
       text.split(' ').forEach((word, i) => {
@@ -3281,8 +3241,8 @@
       input.value = '';
       clearTimeout(replyTimer);
       // pretend to think about it, briefly
+      clearTimeout(hideTimer);
       bubble.hidden = false;
-      closeButton.hidden = false;
       bubble.classList.add('thinking');
       bubbleText.textContent = '…';
       positionBubble();
@@ -3293,12 +3253,6 @@
     window.addEventListener('pet-say', e => {
       clearTimeout(replyTimer);
       say(e.detail);
-    });
-
-    closeButton.addEventListener('click', () => {
-      clearTimeout(replyTimer);
-      bubble.hidden = true;
-      closeButton.hidden = true;
     });
 
     // keep keys typed into the prompt away from the desktop's shortcuts
