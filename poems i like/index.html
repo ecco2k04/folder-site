@@ -2802,17 +2802,14 @@
     const REPLIES = [
       'no.',
       'that sounds like your problem.',
-      'I’m a croissant and i don’t know how i got here',
       'IDK!!!',
       'not my department.',
       'i’m a pastry.',
-      'ask the rock.',
       'hm. no.',
       'sure. or not.',
       'did you try not asking?',
       'i was asleep.',
       'that’s above my pay grade. i’m not paid.',
-      'buttery, and not interested.',
       'can’t talk. flaking.',
       'probably. who knows.',
       'i have no hands.',
@@ -2834,7 +2831,7 @@
     // a few questions get a specific (still unhelpful) answer
     const KEYWORDS = [
       [/\b(hi|hey|hello|yo|sup)\b/i, ['hi. anyway.', 'oh. it’s you.', 'hello. why.']],
-      [/\b(who|what) are you\b|\bname\b/i, ['I’m a croissant and i don’t know how i got here', 'a croissant. obviously.']],
+      [/\b(who|what) are you\b|\bname\b/i, ['a croissant. obviously.']],
       [/\b(help|how do i|how to)\b/i, ['no.', 'that sounds like your problem.', 'have you tried figuring it out']],
       [/\b(love|cute|like you)\b/i, ['ok.', 'i know.', 'weird thing to say to bread.']],
       [/\b(eat|hungry|bite)\b/i, ['absolutely not.', 'don’t even think about it.']],
@@ -3191,7 +3188,9 @@
     let lastReply = '';
     function replyTo(question) {
       const match = KEYWORDS.find(([pattern]) => pattern.test(question));
-      const options = (match ? match[1] : REPLIES).filter(r => r !== lastReply);
+      const pool = match ? match[1] : REPLIES;
+      // avoid repeating the last line, unless it's the only one
+      const options = pool.length > 1 ? pool.filter(r => r !== lastReply) : pool;
       lastReply = options[Math.floor(Math.random() * options.length)];
       return lastReply;
     }
